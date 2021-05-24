@@ -2,11 +2,10 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JoinUserDto } from './dto/join-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { JoinResponse } from './interface/join-response.interface';
 import { LoginResponse } from './interface/login-response.interface';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { VerifyResponse } from './interface/verify-response.interface';
 import { GetMyUserInfoResponse } from './interface/get-my-user-info-response.interface';
+import { StatusResponse } from './interface/status-response.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -15,7 +14,7 @@ export class AuthController {
   @Post('/join')
   public async joinUser(
     @Body() joinUserDto: JoinUserDto,
-  ): Promise<JoinResponse> {
+  ): Promise<StatusResponse> {
     return await this.authService.joinUser(joinUserDto);
   }
 
@@ -24,18 +23,23 @@ export class AuthController {
     return {};
   }
 
-  @Post('/entity')
-  public async verifyUser(@Body() body: VerifyUserDto): Promise<VerifyResponse> {
+  @Post('/verify')
+  public async verifyUser(@Body() body: VerifyUserDto): Promise<StatusResponse> {
     return {};
   }
 
-  @Post('/re-entity')
-  public async ReVerifyUser(@Body() body: VerifyUserDto): Promise<VerifyResponse> {
+  @Post('/re-verify')
+  public async ReVerifyUser(@Body() body: VerifyUserDto): Promise<StatusResponse> {
     return {};
   }
 
-  @Get('/my')
+  @Get('/my-info')
   public async getMyUserInfo(@Req() req: any): Promise<GetMyUserInfoResponse> {
+    return {};
+  }
+
+  @Post('/logout')
+  public async logoutUser(): Promise<StatusResponse> {
     return {};
   }
 }
