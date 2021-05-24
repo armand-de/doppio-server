@@ -17,6 +17,7 @@ export class AuthService {
   ) {}
 
   async joinUser({
+    nickname,
     phone,
     password: plainPassword,
   }: JoinUserDto): Promise<JoinResponse> {
@@ -27,7 +28,7 @@ export class AuthService {
       const verifyNumber = this.getVerifyNumber();
       const password = await this.encryptPassword(plainPassword);
 
-      await this.saveVerifyUser({ phone, password, verifyNumber });
+      await this.saveVerifyUser({ nickname, phone, password, verifyNumber });
       await this.sendVerifyMessage({ phone, verifyNumber });
     } catch (err) {
       response = { success: false, err };

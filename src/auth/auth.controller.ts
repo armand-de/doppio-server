@@ -13,8 +13,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/join')
-  public async joinUser(@Body() { phone, password }: JoinUserDto): Promise<JoinResponse> {
-    return await this.authService.joinUser({ phone, password });
+  public async joinUser(
+    @Body() joinUserDto: JoinUserDto,
+  ): Promise<JoinResponse> {
+    return await this.authService.joinUser(joinUserDto);
   }
 
   @Post('/login')

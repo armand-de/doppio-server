@@ -8,6 +8,9 @@ export class Verify {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ length: 7, nullable: false, unique: true })
+  nickname: string;
+
   @Column({ length: 15, nullable: false, unique: true })
   phone: string;
 
