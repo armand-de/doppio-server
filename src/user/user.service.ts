@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from '../auth/dto/login-user.dto';
 import { ReturnUser } from '../auth/interface/return-user.interface';
 import bcrypt from 'bcrypt';
+import { GetCheckOverlapDataOfUserResponse } from "./interface/get-check-overlap-data-of-user-response.interface";
 
 const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image'];
 
@@ -60,7 +61,31 @@ export class UserService {
     });
   }
 
-  private async getIsPasswordEqual({ input, password }) {
+  private async getIsPasswordEqual({
+    input,
+    password,
+  }: {
+    input: string;
+    password: string;
+  }) {
     return await bcrypt.compare(input, password);
+  }
+
+  private async getUserDataByDynamicData(dynamicDto: any): Promise<User> {
+    return await this.userRepository.findOne({
+      where: dynamicDto,
+      select: getUserSelectList,
+    });
+  }
+
+  async getCheckOverlapDataOfUserByDynamicData(
+    dynamicDto: any,
+  ): Promise<GetCheckOverlapDataOfUserResponse> {
+    return {
+      isExist: !!(await this.userRepository.findOne({
+        where: dynamicDto,
+        select: ['id'],
+      })),
+    };
   }
 }

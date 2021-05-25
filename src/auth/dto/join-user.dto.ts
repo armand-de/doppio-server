@@ -1,6 +1,7 @@
 import { IsMobilePhone, IsString, MaxLength, MinLength } from 'class-validator';
+import { NicknameDto } from '../../user/dto/nickname.dto';
 
-export class JoinUserDto {
+export class JoinUserDto extends NicknameDto {
   @MinLength(3)
   @MaxLength(7)
   @IsString()

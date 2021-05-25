@@ -1,4 +1,11 @@
-import { IsMobilePhone, IsNumberString, IsString, Length, MaxLength, MinLength } from "class-validator";
+import {
+  IsMobilePhone,
+  IsNumberString,
+  IsString,
+  Length,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class SaveVerifyUserDto {
   @MinLength(3)

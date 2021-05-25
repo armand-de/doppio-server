@@ -24,12 +24,16 @@ export class AuthController {
   }
 
   @Post('/verify')
-  public async verifyUser(@Body() body: VerifyUserDto): Promise<StatusResponse> {
+  public async verifyUser(
+    @Body() body: VerifyUserDto,
+  ): Promise<StatusResponse> {
     return {};
   }
 
   @Post('/re-verify')
-  public async ReVerifyUser(@Body() body: VerifyUserDto): Promise<StatusResponse> {
+  public async ReVerifyUser(
+    @Body() body: VerifyUserDto,
+  ): Promise<StatusResponse> {
     return {};
   }
 
