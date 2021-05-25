@@ -25,9 +25,9 @@ export class AuthController {
 
   @Post('/verify')
   public async verifyUser(
-    @Body() body: VerifyUserDto,
+    @Body() verifyUserDto: VerifyUserDto,
   ): Promise<StatusResponse> {
-    return {};
+    return await this.authService.verifyUser(verifyUserDto);
   }
 
   @Post('/re-verify')

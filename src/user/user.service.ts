@@ -5,7 +5,9 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from '../auth/dto/login-user.dto';
 import { ReturnUser } from '../auth/interface/return-user.interface';
 import bcrypt from 'bcrypt';
-import { GetCheckOverlapDataOfUserResponse } from "./interface/get-check-overlap-data-of-user-response.interface";
+import { GetCheckOverlapDataOfUserResponse } from './interface/get-check-overlap-data-of-user-response.interface';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image'];
 
@@ -14,6 +16,20 @@ export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
+
+  async createUser(createUserDto: CreateUserDto): Promise<void> {
+    const newUser = await this.userRepository.create(createUserDto);
+    await this.userRepository.save(newUser);
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto): Promise<void> {
+    const { id } = updateUserDto;
+    await this.userRepository.update({ id }, updateUserDto);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.userRepository.delete({ id });
+  }
 
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find({
@@ -28,7 +44,10 @@ export class UserService {
     });
   }
 
-  async findByLogin({ nickname, password }: LoginUserDto): Promise<ReturnUser> {
+  async findByLogin({
+    nickname,
+    password: input,
+  }: LoginUserDto): Promise<ReturnUser> {
     const user = await this.getUserByNickname({
       nickname,
       select: ['password', ...getUserSelectList],
@@ -37,12 +56,12 @@ export class UserService {
     if (
       user &&
       (await this.getIsPasswordEqual({
-        input: password,
+        input,
         password: user.password,
       }))
     ) {
-      const { nickname, phone, image } = user;
-      return { nickname, phone, image };
+      delete user['password'];
+      return user;
     }
 
     throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
@@ -67,7 +86,7 @@ export class UserService {
   }: {
     input: string;
     password: string;
-  }) {
+  }): Promise<boolean> {
     return await bcrypt.compare(input, password);
   }
 

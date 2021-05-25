@@ -1,19 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { JoinResponse } from './interface/join-response.interface';
 import { Verify } from './entity/verify.entity';
 import twilio from 'twilio';
 import { ConfigService } from '@nestjs/config';
 import { JoinUserDto } from './dto/join-user.dto';
 import bcrypt from 'bcrypt';
-import { SaveVerifyUserDto } from './dto/save-verify-user.dto';
+import { CreateVerifyUserDto } from './dto/create-verify-user.dto';
+import { StatusResponse } from './interface/status-response.interface';
+import { VerifyUserDto } from './dto/verify-user.dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Verify) private verifyRepository: Repository<Verify>,
     private readonly configService: ConfigService,
+    private readonly userService: UserService,
   ) {}
 
   async joinUser({
@@ -21,14 +27,12 @@ export class AuthService {
     phone,
     password: plainPassword,
   }: JoinUserDto): Promise<JoinResponse> {
-    let response: JoinResponse = {
-      success: true,
-    };
+    let response: JoinResponse = { success: true };
     try {
       const verifyNumber = this.getVerifyNumber();
       const password = await this.encryptPassword(plainPassword);
 
-      await this.saveVerifyUser({ nickname, phone, password, verifyNumber });
+      await this.createVerifyUser({ nickname, phone, password, verifyNumber });
       await this.sendVerifyMessage({ phone, verifyNumber });
     } catch (err) {
       response = { success: false, err };
@@ -36,19 +40,32 @@ export class AuthService {
     return response;
   }
 
-  private async saveVerifyUser(
-    saveVerifyUserDto: SaveVerifyUserDto,
-  ): Promise<void> {
-    const verifyUser = await this.verifyRepository.create(saveVerifyUserDto);
-    await this.verifyRepository
-      .save(verifyUser)
-      .then(() => console.log(`${saveVerifyUserDto.phone} is registered.`))
-      .catch(() => {
-        throw new HttpException(
-          'Server Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+  async verifyUser(verifyUserDto: VerifyUserDto): Promise<StatusResponse> {
+    let response: StatusResponse = { success: true };
+    try {
+      const verify = await this.verifyRepository.findOne({
+        where: verifyUserDto,
+        select: ['nickname', 'phone', 'password'],
       });
+      if (verify) {
+        await this.userService.createUser(verify);
+        await this.verifyRepository.delete(verify);
+      }
+    } catch (err) {
+      response = { success: false, err };
+    }
+    return response;
+  }
+
+  private async createVerifyUser(
+    createVerifyUserDto: CreateVerifyUserDto,
+  ): Promise<void> {
+    const newVerifyUser = await this.verifyRepository.create(
+      createVerifyUserDto,
+    );
+    await this.verifyRepository.save(newVerifyUser).catch(() => {
+      throw new HttpException('Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
+    });
   }
 
   private async encryptPassword(password: string): Promise<string> {
@@ -76,20 +93,24 @@ export class AuthService {
     return verifyNumber;
   }
 
-  private async sendVerifyMessage({ phone, verifyNumber }): Promise<void> {
+  private async sendVerifyMessage({
+    phone,
+    verifyNumber,
+  }: {
+    phone: string;
+    verifyNumber: string;
+  }): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const client = new twilio(
+    const client = await new twilio(
       this.configService.get<string>('TWILIO_ACCOUNT_SID'),
       this.configService.get<string>('TWILIO_AUTH_TOKEN'),
     );
 
-    client.messages
-      .create({
-        body: `인증번호: ${verifyNumber}`,
-        to: `+82${phone.substring(1, phone.length)}`,
-        from: this.configService.get<string>('TWILIO_NUMBER'),
-      })
-      .then((msg) => console.log(msg.sid));
+    await client.messages.create({
+      body: `인증번호: ${verifyNumber}`,
+      to: `+82${phone.substring(1, phone.length)}`,
+      from: this.configService.get<string>('TWILIO_NUMBER'),
+    });
   }
 }

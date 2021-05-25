@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class SaveVerifyUserDto {
+export class CreateVerifyUserDto {
   @MinLength(3)
   @MaxLength(7)
   @IsString()
