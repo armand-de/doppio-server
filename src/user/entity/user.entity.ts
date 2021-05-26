@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { Recipe } from '../../recipe/entity/recipe.entity';
 import { Post } from '../../post/entity/post.entity';
+import { RecipeBookmark } from '../../recipe/entity/recipe-bookmark.entity';
+import { RecipePreference } from '../../recipe/entity/recipe-preference.entity';
 
 @Entity('users')
 export class User {
@@ -31,10 +33,22 @@ export class User {
   })
   image: string;
 
-  @OneToMany((type) => Recipe, (recipes: Recipe) => recipes.user)
+  @OneToMany(
+    (type) => RecipeBookmark,
+    (recipe_bookmark: RecipeBookmark) => recipe_bookmark.user,
+  )
+  recipe_bookmarks: RecipeBookmark[];
+
+  @OneToMany((type) => Recipe, (recipe: Recipe) => recipe.user)
   recipes: Recipe[];
 
-  @OneToMany((type) => Post, (posts: Post) => posts.user)
+  @OneToMany(
+    (type) => RecipePreference,
+    (recipe_preference: RecipePreference) => recipe_preference.user,
+  )
+  recipe_preferences: RecipePreference[];
+
+  @OneToMany((type) => Post, (post: Post) => post.user)
   posts: Post[];
 
   @CreateDateColumn({ name: 'created_at', nullable: false })

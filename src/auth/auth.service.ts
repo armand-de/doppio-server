@@ -22,17 +22,12 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async joinUser({
-    nickname,
-    phone,
-    password: plainPassword,
-  }: JoinUserDto): Promise<JoinResponse> {
+  async joinUser({ phone }: JoinUserDto): Promise<JoinResponse> {
     let response: JoinResponse = { success: true };
     try {
       const verifyNumber = this.getVerifyNumber();
-      const password = await this.encryptPassword(plainPassword);
 
-      await this.createVerifyUser({ nickname, phone, password, verifyNumber });
+      await this.createVerifyUser({ phone, verifyNumber });
       await this.sendVerifyMessage({ phone, verifyNumber });
     } catch (err) {
       response = { success: false, err };
@@ -40,13 +35,14 @@ export class AuthService {
     return response;
   }
 
-  async verifyUser(verifyUserDto: VerifyUserDto): Promise<StatusResponse> {
+  async verifyUser({ nickname, password: plainPassword, phone, verifyNumber }: VerifyUserDto): Promise<StatusResponse> {
     let response: StatusResponse = { success: true };
     try {
       const verify = await this.verifyRepository.findOne({
-        where: verifyUserDto,
-        select: ['nickname', 'phone', 'password'],
+        where: { phone, verifyNumber },
+        select: ['id'],
       });
+      const password = await
       if (verify) {
         await this.userService.createUser(verify);
         await this.verifyRepository.delete(verify);

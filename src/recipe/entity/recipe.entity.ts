@@ -4,10 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
+import { RecipeBookmark } from './recipe-bookmark.entity';
+import { RecipePreference } from './recipe-preference.entity';
 
 @Entity('recipes')
 export class Recipe {
@@ -26,12 +29,24 @@ export class Recipe {
   @Column('tinyint', { nullable: false })
   category: number;
 
-  @Column('bigint', { nullable: false })
+  @Column('unsigned big int', { nullable: false })
   time: number;
 
-  @ManyToOne((type) => User, (users: User) => users.id)
+  @ManyToOne((type) => User, (user: User) => user.recipes)
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @OneToMany(
+    (type) => RecipeBookmark,
+    (recipe_bookmark: RecipeBookmark) => recipe_bookmark.recipe,
+  )
+  recipe_bookmarks: RecipeBookmark[];
+
+  @OneToMany(
+    (type) => RecipePreference,
+    (recipe_preference: RecipePreference) => recipe_preference.recipe,
+  )
+  recipe_preferences: RecipePreference[];
 
   @CreateDateColumn({ name: 'created_at', nullable: false })
   createdDate: Date;

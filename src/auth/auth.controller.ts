@@ -34,7 +34,7 @@ export class AuthController {
   public async ReVerifyUser(
     @Body() body: VerifyUserDto,
   ): Promise<StatusResponse> {
-    return {};
+    return await this.authService.reVerifyUser();
   }
 
   @Get('/my-info')

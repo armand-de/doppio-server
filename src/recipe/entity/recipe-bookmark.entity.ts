@@ -9,18 +9,18 @@ import {
 import { User } from '../../user/entity/user.entity';
 import { Recipe } from './recipe.entity';
 
-@Entity('recipe_preferences')
-export class RecipePreference {
+@Entity('recipe_bookmarks')
+export class RecipeBookmark {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne((type) => Recipe, (recipe: Recipe) => recipe.recipe_preferences)
-  @JoinColumn({ name: 'recipeId' })
-  recipe: Recipe;
-
-  @ManyToOne((type) => User, (user: User) => user.recipe_preferences)
+  @ManyToOne((type) => User, (user: User) => user.recipe_bookmarks)
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @ManyToOne((type) => Recipe, (recipe: Recipe) => recipe.recipe_bookmarks)
+  @JoinColumn({ name: 'recipeId' })
+  recipe: Recipe;
 
   @CreateDateColumn({ name: 'created_at', nullable: false })
   createdDate: Date;

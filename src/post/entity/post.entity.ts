@@ -3,11 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  UpdateDateColumn
+} from "typeorm";
 import { User } from '../../user/entity/user.entity';
+import { Comment } from "./comment.entity";
 
 @Entity('posts')
 export class Post {
@@ -20,7 +21,10 @@ export class Post {
   @Column('text', { nullable: false })
   contents: string;
 
-  @ManyToOne((type) => User, (users: User) => users.id)
+  @OneToMany((type) => Comment, (comment: Comment) => comment.post)
+  comments: Comment[];
+
+  @ManyToOne((type) => User, (user: User) => user.posts)
   @JoinColumn({ name: 'userId' })
   user: User;
 
