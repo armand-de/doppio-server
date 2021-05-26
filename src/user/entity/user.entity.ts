@@ -4,7 +4,10 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Recipe } from '../../recipe/entity/recipe.entity';
+import { Post } from '../../post/entity/post.entity';
 
 @Entity('users')
 export class User {
@@ -24,9 +27,15 @@ export class User {
     length: 200,
     nullable: true,
     default:
-      'https://cdn.pixabay.com/photo/2014/11/27/12/24/coffee-547490_960_720.png'
+      'https://cdn.pixabay.com/photo/2014/11/27/12/24/coffee-547490_960_720.png',
   })
   image: string;
+
+  @OneToMany((type) => Recipe, (recipes: Recipe) => recipes.user)
+  recipes: Recipe[];
+
+  @OneToMany((type) => Post, (posts: Post) => posts.user)
+  posts: Post[];
 
   @CreateDateColumn({ name: 'created_at', nullable: false })
   createdDate: Date;
