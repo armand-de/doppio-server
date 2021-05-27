@@ -21,9 +21,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   ): Promise<ReturnUser> {
     const loginUserDto: LoginUserDto = { nickname, password };
     const user = await this.userService.findByLogin(loginUserDto);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
     return done(null, user);
   }
 }

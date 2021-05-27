@@ -10,6 +10,8 @@ import { Recipe } from '../../recipe/entity/recipe.entity';
 import { Post } from '../../post/entity/post.entity';
 import { RecipeBookmark } from '../../recipe/entity/recipe-bookmark.entity';
 import { RecipePreference } from '../../recipe/entity/recipe-preference.entity';
+import { PostEvaluation } from '../../post/entity/post-evaluation.entity';
+import { Comment } from '../../post/entity/comment.entity';
 
 @Entity('users')
 export class User {
@@ -50,6 +52,15 @@ export class User {
 
   @OneToMany((type) => Post, (post: Post) => post.user)
   posts: Post[];
+
+  @OneToMany(
+    (type) => PostEvaluation,
+    (post_evaluation: PostEvaluation) => post_evaluation.user,
+  )
+  post_evaluations: PostEvaluation[];
+
+  @OneToMany((type) => Comment, (comment: Comment) => comment.user)
+  comments: Comment[];
 
   @CreateDateColumn({ name: 'created_at', nullable: false })
   createdDate: Date;

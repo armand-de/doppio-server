@@ -1,11 +1,24 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JoinUserDto } from './dto/join-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import { LoginResponse } from './interface/login-response.interface';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { GetMyUserInfoResponse } from './interface/get-my-user-info-response.interface';
+import { GetProfileResponse } from './interface/get-profile-response.interface';
 import { StatusResponse } from './interface/status-response.interface';
+import { LocalAuthGuard } from './guard/local-auth.guard';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
+
+const response = { success: true };
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +31,23 @@ export class AuthController {
     return await this.authService.joinUser(joinUserDto);
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('/login')
-  public async loginUser(@Body() body: LoginUserDto): Promise<LoginResponse> {
-    return {};
+  public async loginUser(
+    @Req() req: any,
+    @Res() res: any,
+  ): Promise<StatusResponse> {
+    try {
+      const { nickname, phone } = req.user;
+      const accessToken = await this.authService.getJwtAccessToken({
+        nickname,
+        phone,
+      });
+      res.cookie('Authorization', accessToken);
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return response;
   }
 
   @Post('/verify')
@@ -30,20 +57,21 @@ export class AuthController {
     return await this.authService.verifyUser(verifyUserDto);
   }
 
-  @Post('/re-verify')
-  public async ReVerifyUser(
-    @Body() body: VerifyUserDto,
+  @UseGuards(JwtAuthGuard)
+  @Get('/profile')
+  public async getProfile(@Req() req: any): Promise<GetProfileResponse> {
+    return req.user;
+  }
+
+  @Delete('/logout')
+  public async logoutUser(
+    @Res({ passthrough: true }) res,
   ): Promise<StatusResponse> {
-    return await this.authService.reVerifyUser();
-  }
-
-  @Get('/my-info')
-  public async getMyUserInfo(@Req() req: any): Promise<GetMyUserInfoResponse> {
-    return {};
-  }
-
-  @Post('/logout')
-  public async logoutUser(): Promise<StatusResponse> {
-    return {};
+    try {
+      res.cookie('Authorization', '', { maxAge: 0 });
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return response;
   }
 }

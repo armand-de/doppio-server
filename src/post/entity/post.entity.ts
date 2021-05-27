@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 import { User } from '../../user/entity/user.entity';
-import { Comment } from "./comment.entity";
+import { Comment } from './comment.entity';
+import { PostEvaluation } from './post-evaluation.entity';
 
 @Entity('posts')
 export class Post {
@@ -23,6 +25,12 @@ export class Post {
 
   @OneToMany((type) => Comment, (comment: Comment) => comment.post)
   comments: Comment[];
+
+  @OneToMany(
+    (type) => PostEvaluation,
+    (post_evaluation: PostEvaluation) => post_evaluation.post,
+  )
+  post_evaluations: PostEvaluation[];
 
   @ManyToOne((type) => User, (user: User) => user.posts)
   @JoinColumn({ name: 'userId' })

@@ -13,6 +13,13 @@ import { CreateVerifyUserDto } from './dto/create-verify-user.dto';
 import { StatusResponse } from './interface/status-response.interface';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { UserService } from '../user/user.service';
+import { LoginUserDto } from './dto/login-user.dto';
+import { LoginResponse } from './interface/login-response.interface';
+import { User } from '../user/entity/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
+
+const response = { success: true };
 
 @Injectable()
 export class AuthService {
@@ -20,37 +27,54 @@ export class AuthService {
     @InjectRepository(Verify) private verifyRepository: Repository<Verify>,
     private readonly configService: ConfigService,
     private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async joinUser({ phone }: JoinUserDto): Promise<JoinResponse> {
-    let response: JoinResponse = { success: true };
     try {
       const verifyNumber = this.getVerifyNumber();
 
       await this.createVerifyUser({ phone, verifyNumber });
       await this.sendVerifyMessage({ phone, verifyNumber });
     } catch (err) {
-      response = { success: false, err };
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return response;
   }
 
-  async verifyUser({ nickname, password: plainPassword, phone, verifyNumber }: VerifyUserDto): Promise<StatusResponse> {
-    let response: StatusResponse = { success: true };
+  async verifyUser({
+    nickname,
+    password: plainPassword,
+    phone,
+    verifyNumber,
+  }: VerifyUserDto): Promise<StatusResponse> {
     try {
       const verify = await this.verifyRepository.findOne({
         where: { phone, verifyNumber },
         select: ['id'],
       });
-      const password = await
       if (verify) {
-        await this.userService.createUser(verify);
+        const password = await this.encryptPassword(plainPassword);
+        const { phone } = verify;
+        await this.userService.createUser({
+          phone,
+          nickname,
+          password,
+        });
         await this.verifyRepository.delete(verify);
       }
     } catch (err) {
-      response = { success: false, err };
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return response;
+  }
+
+  async getJwtAccessToken(
+    payload: GetJwtAccessTokenDto,
+  ): Promise<LoginResponse> {
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 
   private async createVerifyUser(

@@ -1,28 +1,27 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
-  JoinColumn,
+  Entity, JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Post } from '../../post/entity/post.entity';
 import { User } from '../../user/entity/user.entity';
+import { Post } from './post.entity';
 
-@Entity('comments')
-export class Comment {
+@Entity('post_evaluations')
+export class PostEvaluation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 200, nullable: false })
-  contents: string;
+  @Column('tinyint', { nullable: false })
+  method: 1 | -1;
 
-  @ManyToOne((type) => User, (user: User) => user.comments)
+  @ManyToOne((type) => User, (user: User) => user.post_evaluations)
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne((type) => Post, (post: Post) => post.comments)
+  @ManyToOne((type) => Post, (post: Post) => post.post_evaluations)
   @JoinColumn({ name: 'postId' })
   post: Post;
 

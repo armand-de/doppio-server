@@ -1,3 +1,3 @@
-import { GetMyUserInfoResponse } from './get-my-user-info-response.interface';
+import { GetProfileResponse } from './get-profile-response.interface';
 
-export type ReturnUser = GetMyUserInfoResponse;
+export type ReturnUser = GetProfileResponse;

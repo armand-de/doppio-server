@@ -1,4 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
@@ -64,7 +67,7 @@ export class UserService {
       return user;
     }
 
-    throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    throw new UnauthorizedException();
   }
 
   private async getUserByNickname({
