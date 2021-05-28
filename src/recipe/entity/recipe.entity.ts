@@ -17,10 +17,10 @@ export class Recipe {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('string', { length: 30, nullable: false })
+  @Column({ length: 30, nullable: false })
   title: string;
 
-  @Column('string', { length: 60 })
+  @Column({ length: 60 })
   description: string;
 
   @Column('text', { nullable: false })
@@ -29,7 +29,7 @@ export class Recipe {
   @Column('tinyint', { nullable: false })
   category: number;
 
-  @Column('unsigned big int', { nullable: false })
+  @Column('int', { nullable: false })
   time: number;
 
   @ManyToOne((type) => User, (user: User) => user.recipes)

@@ -35,14 +35,14 @@ export class User {
   })
   image: string;
 
+  @OneToMany((type) => Recipe, (recipe: Recipe) => recipe.user)
+  recipes: Recipe[];
+
   @OneToMany(
     (type) => RecipeBookmark,
     (recipe_bookmark: RecipeBookmark) => recipe_bookmark.user,
   )
   recipe_bookmarks: RecipeBookmark[];
-
-  @OneToMany((type) => Recipe, (recipe: Recipe) => recipe.user)
-  recipes: Recipe[];
 
   @OneToMany(
     (type) => RecipePreference,

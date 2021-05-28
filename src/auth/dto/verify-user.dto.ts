@@ -25,5 +25,5 @@ export class VerifyUserDto {
 
   @Length(6)
   @IsNumberString()
-  verifyNumber: string;
+  readonly verifyNumber: string;
 }

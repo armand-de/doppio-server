@@ -13,9 +13,7 @@ import { CreateVerifyUserDto } from './dto/create-verify-user.dto';
 import { StatusResponse } from './interface/status-response.interface';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { UserService } from '../user/user.service';
-import { LoginUserDto } from './dto/login-user.dto';
 import { LoginResponse } from './interface/login-response.interface';
-import { User } from '../user/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
 
@@ -37,6 +35,7 @@ export class AuthService {
       await this.createVerifyUser({ phone, verifyNumber });
       await this.sendVerifyMessage({ phone, verifyNumber });
     } catch (err) {
+      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return response;
@@ -55,7 +54,6 @@ export class AuthService {
       });
       if (verify) {
         const password = await this.encryptPassword(plainPassword);
-        const { phone } = verify;
         await this.userService.createUser({
           phone,
           nickname,
@@ -83,8 +81,8 @@ export class AuthService {
     const newVerifyUser = await this.verifyRepository.create(
       createVerifyUserDto,
     );
-    await this.verifyRepository.save(newVerifyUser).catch(() => {
-      throw new HttpException('Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
+    await this.verifyRepository.save(newVerifyUser).catch((err) => {
+      throw new Error(err);
     });
   }
 
