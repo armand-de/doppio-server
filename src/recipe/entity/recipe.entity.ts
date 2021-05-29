@@ -17,10 +17,13 @@ export class Recipe {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 30, nullable: false })
-  title: string;
+  @Column({ length: 20, nullable: false })
+  name: string;
 
-  @Column({ length: 60 })
+  @Column({ length: 200, nullable: true })
+  image: string;
+
+  @Column({ length: 30, nullable: true })
   description: string;
 
   @Column('text', { nullable: false })

@@ -9,6 +9,7 @@ import { RecipeModule } from './recipe/recipe.module';
 import { PostModule } from './post/post.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MorganInterceptor, MorganModule } from 'nest-morgan';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
     }),
     RecipeModule,
     PostModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [

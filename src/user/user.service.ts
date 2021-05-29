@@ -8,10 +8,10 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from '../auth/dto/login-user.dto';
 import { ReturnUser } from '../auth/interface/return-user.interface';
 import bcrypt from 'bcrypt';
-import { GetCheckOverlapDataOfUserResponse } from './interface/get-check-overlap-data-of-user-response.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PhoneDto } from './dto/phone.dto';
+import { NicknameDto } from "./dto/nickname.dto";
 
 const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image'];
 
@@ -55,12 +55,16 @@ export class UserService {
     });
   }
 
+  async getUserByNickname({ nickname }: NicknameDto): Promise<User> {
+    return await this.userRepository.findOne({ nickname });
+  }
+
   async findByLogin({
     nickname,
     password: input,
   }: LoginUserDto): Promise<ReturnUser> {
-    const user = await this.getUserByNickname({
-      nickname,
+    const user = await this.getUserDataByDynamicData({
+      where: { nickname },
       select: ['password', ...getUserSelectList],
     });
 
@@ -78,17 +82,12 @@ export class UserService {
     throw new UnauthorizedException();
   }
 
-  private async getUserByNickname({
-    nickname,
-    select,
-  }: {
-    nickname: string;
-    select: (keyof User)[];
-  }): Promise<User> {
-    return await this.userRepository.findOne({
-      where: { nickname },
-      select,
-    });
+  async getUserIsExistByPhone(phoneDto: PhoneDto): Promise<boolean> {
+    return !!(await this.getUserByPhone(phoneDto));
+  }
+
+  async getUserIsExistByNickname(nicknameDto: NicknameDto): Promise<boolean> {
+    return !!(await this.getUserByNickname(nicknameDto));
   }
 
   private async getIsPasswordEqual({
@@ -101,25 +100,13 @@ export class UserService {
     return await bcrypt.compare(input, password);
   }
 
-  private async getUserIsExistByPhone(phoneDto: PhoneDto): Promise<boolean> {
-    return !!(await this.getUserByPhone(phoneDto));
-  }
-
-  private async getUserDataByDynamicData(dynamicDto: any): Promise<User> {
-    return await this.userRepository.findOne({
-      where: dynamicDto,
-      select: getUserSelectList,
-    });
-  }
-
-  async getCheckOverlapDataOfUserByDynamicData(
-    dynamicDto: any,
-  ): Promise<GetCheckOverlapDataOfUserResponse> {
-    return {
-      isExist: !!(await this.userRepository.findOne({
-        where: dynamicDto,
-        select: ['id'],
-      })),
-    };
+  private async getUserDataByDynamicData({
+    where,
+    select,
+  }: {
+    where: PhoneDto | NicknameDto | { id: string };
+    select: (keyof User)[];
+  }): Promise<User> {
+    return await this.userRepository.findOne({ where, select });
   }
 }
