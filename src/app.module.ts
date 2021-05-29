@@ -22,9 +22,9 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
         `env/${
           process.env.NODE_ENV === 'production'
             ? 'prod'
-            : process.env.NODE_ENV === 'development'
-            ? 'dev'
-            : 'test'
+            : process.env.NODE_ENV === 'test'
+            ? 'test'
+            : 'dev'
         }.env`,
       ],
       ignoreEnvFile: process.env.NODE_ENV === 'production',
