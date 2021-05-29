@@ -2,7 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entity/user.entity';
 import { PhoneDto } from './dto/phone.dto';
-import { NicknameDto } from "./dto/nickname.dto";
+import { NicknameDto } from './dto/nickname.dto';
 
 @Controller('user')
 export class UserController {
@@ -18,14 +18,12 @@ export class UserController {
     return await this.userService.getUserById(params.id);
   }
 
-  @Get('/is-exist/phone/:phone')
-  async getIsExistUserByPhone(
-    @Param() { phone }: PhoneDto,
-  ): Promise<boolean> {
+  @Get('/exist/phone/:phone')
+  async getIsExistUserByPhone(@Param() { phone }: PhoneDto): Promise<boolean> {
     return await this.userService.getUserIsExistByPhone({ phone });
   }
 
-  @Get('/is-exist/nickname/:nickname')
+  @Get('/exist/nickname/:nickname')
   async getIsExistUserByNickname(
     @Param() { nickname }: NicknameDto,
   ): Promise<boolean> {

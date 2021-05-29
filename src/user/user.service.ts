@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PhoneDto } from './dto/phone.dto';
-import { NicknameDto } from "./dto/nickname.dto";
+import { NicknameDto } from './dto/nickname.dto';
 
 const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image'];
 
