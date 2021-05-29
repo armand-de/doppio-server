@@ -1,3 +1,10 @@
-import { CreateVerifyUserDto } from './create-verify-user.dto';
+import { IsNumberString, IsString, Length } from 'class-validator';
 
-export class UpdateVerifyUserDto extends CreateVerifyUserDto {};
+export class UpdateVerifyUserDto {
+  @IsString()
+  readonly id: string;
+
+  @Length(6)
+  @IsNumberString()
+  readonly verifyNumber: string;
+};

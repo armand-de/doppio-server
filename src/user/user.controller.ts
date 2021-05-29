@@ -24,7 +24,7 @@ export class UserController {
     @Param() phoneDto: PhoneDto,
   ): Promise<GetCheckOverlapDataOfUserResponse> {
     return await this.userService.getCheckOverlapDataOfUserByDynamicData(
-      PhoneDto,
+      phoneDto,
     );
   }
 

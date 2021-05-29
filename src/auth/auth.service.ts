@@ -33,9 +33,10 @@ export class AuthService {
     try {
       const verifyNumber = this.getVerifyNumber();
       const object = { phone, verifyNumber };
+      const { id } = await this.getVerifyUserIdByPhone(phone);
 
-      if (await this.getIsExistVerifyUserByPhone(phone)) {
-        await this.updateVerifyUser(object);
+      if (id) {
+        await this.updateVerifyNumberById({ id, verifyNumber });
       } else {
         await this.createVerifyUser(object);
       }
@@ -91,18 +92,18 @@ export class AuthService {
     });
   }
 
-  private async updateVerifyUser({
-    phone,
+  private async updateVerifyNumberById({
+    id,
     verifyNumber,
   }: UpdateVerifyUserDto): Promise<void> {
-    await this.verifyRepository.update({ phone }, { verifyNumber });
+    await this.verifyRepository.save({ id, verifyNumber });
   }
 
-  private async getIsExistVerifyUserByPhone(phone: string): Promise<boolean> {
-    return !!(await this.verifyRepository.findOne({
+  private async getVerifyUserIdByPhone(phone: string): Promise<Verify> {
+    return await this.verifyRepository.findOne({
       where: { phone },
       select: ['id'],
-    }));
+    });
   }
 
   private async encryptPassword(password: string): Promise<string> {

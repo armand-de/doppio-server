@@ -11,6 +11,7 @@ import bcrypt from 'bcrypt';
 import { GetCheckOverlapDataOfUserResponse } from './interface/get-check-overlap-data-of-user-response.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PhoneDto } from './dto/phone.dto';
 
 const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image'];
 
@@ -43,6 +44,13 @@ export class UserService {
   async getUserById(id: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { id },
+      select: getUserSelectList,
+    });
+  }
+
+  async getUserByPhone(phoneDto: PhoneDto): Promise<User> {
+    return await this.userRepository.findOne({
+      where: phoneDto,
       select: getUserSelectList,
     });
   }
@@ -91,6 +99,10 @@ export class UserService {
     password: string;
   }): Promise<boolean> {
     return await bcrypt.compare(input, password);
+  }
+
+  private async getUserIsExistByPhone(phoneDto: PhoneDto): Promise<boolean> {
+    return !!(await this.getUserByPhone(phoneDto));
   }
 
   private async getUserDataByDynamicData(dynamicDto: any): Promise<User> {
