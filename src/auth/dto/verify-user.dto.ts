@@ -8,7 +8,7 @@ import {
 
 export class VerifyUserDto {
   @MinLength(3)
-  @MaxLength(7)
+  @MaxLength(8)
   @IsString()
   readonly nickname: string;
 

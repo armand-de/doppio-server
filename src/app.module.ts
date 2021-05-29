@@ -7,9 +7,12 @@ import { DatabaseConfigModule } from './database-config.module';
 import { ConfigModule } from '@nestjs/config';
 import { RecipeModule } from './recipe/recipe.module';
 import { PostModule } from './post/post.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { MorganInterceptor, MorganModule } from 'nest-morgan';
 
 @Module({
   imports: [
+    MorganModule,
     UserModule,
     AuthModule,
     DatabaseConfigModule,
@@ -24,6 +27,12 @@ import { PostModule } from './post/post.module';
     PostModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MorganInterceptor('dev'),
+    },
+  ],
 })
 export class AppModule {}

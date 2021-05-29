@@ -43,11 +43,11 @@ export class AuthController {
         nickname,
         phone,
       });
-      res.cookie('Authorization', accessToken);
+      await res.cookie('Authorization', accessToken);
+      return response;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
-    return response;
   }
 
   @Post('/verify')

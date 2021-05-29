@@ -70,9 +70,8 @@ export class AuthService {
   async getJwtAccessToken(
     payload: GetJwtAccessTokenDto,
   ): Promise<LoginResponse> {
-    return {
-      accessToken: this.jwtService.sign(payload),
-    };
+    const accessToken = await this.jwtService.sign(payload);
+    return { accessToken };
   }
 
   private async createVerifyUser(

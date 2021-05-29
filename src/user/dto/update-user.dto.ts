@@ -15,7 +15,7 @@ export class UpdateUserDto {
 
   @IsOptional()
   @MinLength(3)
-  @MaxLength(7)
+  @MaxLength(8)
   @IsString()
   readonly nickname: string;
 
