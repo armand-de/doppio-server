@@ -19,7 +19,13 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
-        `env/${process.env.NODE_ENV === 'test' ? 'test' : 'dev'}.env`,
+        `env/${
+          process.env.NODE_ENV === 'production'
+            ? 'prod'
+            : process.env.NODE_ENV === 'development'
+            ? 'dev'
+            : 'test'
+        }.env`,
       ],
       ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
