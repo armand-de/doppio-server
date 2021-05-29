@@ -16,6 +16,7 @@ import { UserService } from '../user/user.service';
 import { LoginResponse } from './interface/login-response.interface';
 import { JwtService } from '@nestjs/jwt';
 import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
+import { UpdateVerifyUserDto } from './dto/update-verify-user.dto';
 
 const response = { success: true };
 
@@ -31,9 +32,14 @@ export class AuthService {
   async joinUser({ phone }: JoinUserDto): Promise<JoinResponse> {
     try {
       const verifyNumber = this.getVerifyNumber();
+      const object = { phone, verifyNumber };
 
-      await this.createVerifyUser({ phone, verifyNumber });
-      await this.sendVerifyMessage({ phone, verifyNumber });
+      if (await this.getIsExistVerifyUserByPhone(phone)) {
+        await this.updateVerifyUser(object);
+      } else {
+        await this.createVerifyUser(object);
+      }
+      await this.sendVerifyMessage(object);
     } catch (err) {
       console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
@@ -83,6 +89,20 @@ export class AuthService {
     await this.verifyRepository.save(newVerifyUser).catch((err) => {
       throw new Error(err);
     });
+  }
+
+  private async updateVerifyUser({
+    phone,
+    verifyNumber,
+  }: UpdateVerifyUserDto): Promise<void> {
+    await this.verifyRepository.update({ phone }, { verifyNumber });
+  }
+
+  private async getIsExistVerifyUserByPhone(phone: string): Promise<boolean> {
+    return !!(await this.verifyRepository.findOne({
+      where: { phone },
+      select: ['id'],
+    }));
   }
 
   private async encryptPassword(password: string): Promise<string> {
