@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { User } from './entity/user.entity';
 import { PhoneDto } from './dto/phone.dto';
 import { NicknameDto } from './dto/nickname.dto';
+import { GetIsExistUserResponse } from "./entity/get-is-exist-user-response.interface";
 
 @Controller('user')
 export class UserController {
@@ -19,14 +20,20 @@ export class UserController {
   }
 
   @Get('/exist/phone/:phone')
-  async getIsExistUserByPhone(@Param() { phone }: PhoneDto): Promise<boolean> {
-    return await this.userService.getUserIsExistByPhone({ phone });
+  async getIsExistUserByPhone(
+    @Param() { phone }: PhoneDto,
+  ): Promise<GetIsExistUserResponse> {
+    return {
+      isExist: await this.userService.getUserIsExistByPhone({ phone }),
+    };
   }
 
   @Get('/exist/nickname/:nickname')
   async getIsExistUserByNickname(
     @Param() { nickname }: NicknameDto,
-  ): Promise<boolean> {
-    return await this.userService.getUserIsExistByNickname({ nickname });
+  ): Promise<GetIsExistUserResponse> {
+    return {
+      isExist: await this.userService.getUserIsExistByNickname({ nickname }),
+    };
   }
 }
