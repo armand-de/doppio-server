@@ -30,16 +30,16 @@ let AuthController = class AuthController {
     async loginUser(req, res) {
         try {
             const { nickname, phone } = req.user;
-            const accessToken = await this.authService.getJwtAccessToken({
+            const { accessToken } = await this.authService.getJwtAccessToken({
                 nickname,
                 phone,
             });
-            await res.cookie('Authorization', accessToken);
-            return response;
+            res.cookie('Authorization', accessToken);
         }
         catch (err) {
             throw new common_1.HttpException(err, common_1.HttpStatus.BAD_REQUEST);
         }
+        return response;
     }
     async verifyUser(verifyUserDto) {
         return await this.authService.verifyUser(verifyUserDto);
@@ -68,7 +68,7 @@ __decorate([
     common_1.UseGuards(local_auth_guard_1.LocalAuthGuard),
     common_1.Post('/login'),
     __param(0, common_1.Req()),
-    __param(1, common_1.Res()),
+    __param(1, common_1.Res({ passthrough: true })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)

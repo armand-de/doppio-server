@@ -6497,7 +6497,7 @@
         "affectsGlobalScope": false
       },
       "../src/auth/auth.service.ts": {
-        "version": "1d1ad1aafc485843d994db05c734a7e0ccf84ef925954ba9c4383d7081ec0016",
+        "version": "0e198f98ba1ba2ee9aa00b3b79fde840982f49f16725cc1fbdd1202f7ee892d1",
         "signature": "84610d92546e9dd08361bf110a74e450947f0ad9f532c1ed8e2eb027bacf6164",
         "affectsGlobalScope": false
       },
@@ -6567,7 +6567,7 @@
         "affectsGlobalScope": false
       },
       "../src/auth/auth.controller.ts": {
-        "version": "a442f4c575a54ce9e47eb4e1aaf474a7413b3f602accaba1edc0917b783a5d05",
+        "version": "8f176800038ed27238868499ba6b71c2b0d97b0cb52beeef8aa2cb597aeb36b3",
         "signature": "c503c5873cab2f976ff487364dcf47da9a8cc506f365cce9799e4e808e6e4170",
         "affectsGlobalScope": false
       },

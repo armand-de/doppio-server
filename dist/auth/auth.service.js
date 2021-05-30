@@ -70,6 +70,7 @@ let AuthService = class AuthService {
             }
         }
         catch (err) {
+            console.log(err);
             throw new common_1.HttpException(err, common_1.HttpStatus.BAD_REQUEST);
         }
         return response;

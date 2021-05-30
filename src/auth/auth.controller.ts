@@ -35,19 +35,19 @@ export class AuthController {
   @Post('/login')
   public async loginUser(
     @Req() req: any,
-    @Res() res: any,
+    @Res({ passthrough: true }) res: any,
   ): Promise<StatusResponse> {
     try {
       const { nickname, phone } = req.user;
-      const accessToken = await this.authService.getJwtAccessToken({
+      const { accessToken } = await this.authService.getJwtAccessToken({
         nickname,
         phone,
       });
       await res.cookie('Authorization', accessToken);
-      return response;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
+    return response;
   }
 
   @Post('/verify')
