@@ -34,10 +34,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  public async loginUser(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
-  ): Promise<LoginResponse> {
+  public async loginUser(@Req() req: any): Promise<LoginResponse> {
     try {
       const { nickname, phone } = req.user;
       const { accessToken } = await this.authService.getJwtAccessToken({
