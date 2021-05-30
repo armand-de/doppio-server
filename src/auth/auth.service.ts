@@ -33,8 +33,7 @@ export class AuthService {
     try {
       const verifyNumber = this.getVerifyNumber();
       const object = { phone, verifyNumber };
-      const { id } = await this.getVerifyUserIdByPhone(phone);
-
+      const id = (await this.getVerifyUserIdByPhone(phone))?.id;
       if (id) {
         await this.updateVerifyNumberById({ id, verifyNumber });
       } else {

@@ -34,10 +34,11 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async joinUser({ phone }) {
+        var _a;
         try {
             const verifyNumber = this.getVerifyNumber();
             const object = { phone, verifyNumber };
-            const { id } = await this.getVerifyUserIdByPhone(phone);
+            const id = (_a = (await this.getVerifyUserIdByPhone(phone))) === null || _a === void 0 ? void 0 : _a.id;
             if (id) {
                 await this.updateVerifyNumberById({ id, verifyNumber });
             }
