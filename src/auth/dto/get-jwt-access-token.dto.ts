@@ -1,14 +1,8 @@
-import { IsMobilePhone, IsString, MaxLength, MinLength } from 'class-validator';
+import { IntersectionType } from '@nestjs/mapped-types';
+import { NicknameDto } from '../../user/dto/nickname.dto';
+import { PhoneDto } from '../../user/dto/phone.dto';
 
-export class GetJwtAccessTokenDto {
-  @MinLength(3)
-  @MaxLength(8)
-  @IsString()
-  readonly nickname: string;
-
-  @MinLength(7)
-  @MaxLength(15)
-  @IsMobilePhone()
-  @IsString()
-  readonly phone: string;
-}
+export class GetJwtAccessTokenDto extends IntersectionType(
+  NicknameDto,
+  PhoneDto,
+) {}

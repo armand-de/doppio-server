@@ -1,10 +1,8 @@
-import { IsNumberString, IsString, Length } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
+import { VerifyNumberDto } from './verify-number.dto';
 
-export class UpdateVerifyUserDto {
+export class UpdateVerifyUserDto extends VerifyNumberDto {
   @IsString()
+  @IsUUID()
   readonly id: string;
-
-  @Length(6)
-  @IsNumberString()
-  readonly verifyNumber: string;
 };

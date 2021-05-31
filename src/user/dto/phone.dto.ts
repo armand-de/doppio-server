@@ -1,9 +1,8 @@
-import { IsMobilePhone, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsMobilePhone, IsString, Length } from 'class-validator';
 
 export class PhoneDto {
-  @MinLength(3)
-  @MaxLength(15)
+  @Length(7, 15)
   @IsMobilePhone()
   @IsString()
   readonly phone: string;
-};
+}

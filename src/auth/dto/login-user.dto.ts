@@ -1,13 +1,5 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IntersectionType } from '@nestjs/mapped-types';
+import { NicknameDto } from '../../user/dto/nickname.dto';
+import { PasswordDto } from '../../user/dto/password.dto';
 
-export class LoginUserDto {
-  @MinLength(3)
-  @MaxLength(8)
-  @IsString()
-  readonly nickname: string;
-
-  @MinLength(7)
-  @MaxLength(30)
-  @IsString()
-  readonly password: string;
-}
+export class LoginUserDto extends IntersectionType(NicknameDto, PasswordDto) {}

@@ -17,8 +17,11 @@ export class Post {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 30, nullable: false })
+  @Column({ length: 40, nullable: false })
   title: string;
+
+  @Column('text', { nullable: true })
+  image: string;
 
   @Column('text', { nullable: false })
   contents: string;

@@ -1,19 +1,10 @@
-import { IsMobilePhone, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsString, Length } from 'class-validator';
+import { IntersectionType } from '@nestjs/mapped-types';
+import { PhoneDto } from './phone.dto';
+import { NicknameDto } from './nickname.dto';
 
-export class CreateUserDto {
-  @MinLength(3)
-  @MaxLength(8)
-  @IsString()
-  readonly nickname: string;
-
-  @MinLength(7)
-  @MaxLength(30)
+export class CreateUserDto extends IntersectionType(NicknameDto, PhoneDto) {
+  @Length(7, 30)
   @IsString()
   readonly password: string;
-
-  @MinLength(7)
-  @MaxLength(15)
-  @IsMobilePhone()
-  @IsString()
-  readonly phone: string;
 }

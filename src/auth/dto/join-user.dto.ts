@@ -1,9 +1,3 @@
-import { IsMobilePhone, IsString, MaxLength, MinLength } from 'class-validator';
+import { PhoneDto } from '../../user/dto/phone.dto';
 
-export class JoinUserDto {
-  @MinLength(7)
-  @MaxLength(15)
-  @IsMobilePhone()
-  @IsString()
-  readonly phone: string;
-}
+export class JoinUserDto extends PhoneDto {}

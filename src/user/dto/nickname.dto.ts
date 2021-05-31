@@ -1,8 +1,7 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 
 export class NicknameDto {
-  @MinLength(3)
-  @MaxLength(8)
+  @Length(3, 8)
   @IsString()
   readonly nickname: string;
 }
