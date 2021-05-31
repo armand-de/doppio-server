@@ -68,7 +68,6 @@ export class AuthService {
         await this.verifyRepository.delete(verify);
       }
     } catch (err) {
-      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return response;

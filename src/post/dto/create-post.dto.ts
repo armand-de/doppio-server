@@ -1,23 +1,8 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-  ValidateIf,
-} from 'class-validator';
+import { CreatePostRequestDto } from './create-post-request.dto';
+import { IntersectionType } from '@nestjs/mapped-types';
+import { UserIdDto } from './user-id.dto';
 
-export class CreatePostDto {
-  @IsNotEmpty()
-  @MaxLength(40)
-  @IsString()
-  readonly title: string;
-
-  @IsOptional()
-  @IsString()
-  readonly image: string;
-
-  @IsNotEmpty()
-  @ValidateIf((text: string) => text.trim() !== '')
-  @IsString()
-  readonly contents: string;
-}
+export class CreatePostDto extends IntersectionType(
+  CreatePostRequestDto,
+  UserIdDto,
+) {}
