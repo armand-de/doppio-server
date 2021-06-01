@@ -4,8 +4,8 @@ import { Post } from './entity/post.entity';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from './interface/status-response.interface';
+import { SUCCESS_RESPONSE } from '../utils/success-response';
 
-const SUCCESS_RESPONSE = { success: true };
 const POST_SELECT: (keyof Post)[] = [
   'id',
   'title',

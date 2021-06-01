@@ -16,7 +16,6 @@ import { StatusResponse } from './interface/status-response.interface';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CreatePostRequestDto } from './dto/create-post-request.dto';
 import { Post as PostEntity } from './entity/post.entity';
-import { DeletePostDto } from './dto/delete-post.dto';
 
 @Controller('post')
 export class PostController {
@@ -52,7 +51,7 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Delete('/delete/:id')
-  async deletePost(@Req() { id }: DeletePostDto): Promise<StatusResponse> {
+  async deletePost(@Param('id') id: string): Promise<StatusResponse> {
     return await this.postService.deletePost(id);
   }
 }

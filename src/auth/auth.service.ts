@@ -16,8 +16,7 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
 import { UpdateVerifyUserDto } from './dto/update-verify-user.dto';
-
-const response = { success: true };
+import { SUCCESS_RESPONSE } from '../utils/success-response';
 
 @Injectable()
 export class AuthService {
@@ -43,7 +42,7 @@ export class AuthService {
       console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
-    return response;
+    return SUCCESS_RESPONSE;
   }
 
   async verifyUser({
@@ -69,7 +68,7 @@ export class AuthService {
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
-    return response;
+    return SUCCESS_RESPONSE;
   }
 
   async getJwtAccessToken(payload: GetJwtAccessTokenDto): Promise<string> {

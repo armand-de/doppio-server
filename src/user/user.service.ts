@@ -13,7 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PhoneDto } from './dto/phone.dto';
 import { NicknameDto } from './dto/nickname.dto';
 
-const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image', 'id'];
+const USER_SELECT: (keyof User)[] = ['nickname', 'phone', 'image', 'id'];
 
 @Injectable()
 export class UserService {
@@ -37,21 +37,21 @@ export class UserService {
 
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find({
-      select: getUserSelectList,
+      select: USER_SELECT,
     });
   }
 
   async getUserById(id: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { id },
-      select: getUserSelectList,
+      select: USER_SELECT,
     });
   }
 
   async getUserByPhone(phoneDto: PhoneDto): Promise<User> {
     return await this.userRepository.findOne({
       where: phoneDto,
-      select: getUserSelectList,
+      select: USER_SELECT,
     });
   }
 
@@ -65,7 +65,7 @@ export class UserService {
   }: LoginUserDto): Promise<ReturnUser> {
     const user = await this.getUserDataByDynamicData({
       where: { nickname },
-      select: ['password', ...getUserSelectList],
+      select: ['password', ...USER_SELECT],
     });
 
     if (
