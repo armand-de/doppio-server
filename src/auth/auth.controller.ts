@@ -3,11 +3,9 @@ import {
   HttpStatus,
   Body,
   Controller,
-  Delete,
   Get,
   Post,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -18,8 +16,6 @@ import { StatusResponse } from './interface/status-response.interface';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LoginResponse } from './interface/login-response.interface';
-
-const response = { success: true };
 
 @Controller('auth')
 export class AuthController {
@@ -36,9 +32,9 @@ export class AuthController {
   @Post('/login')
   public async loginUser(@Req() req: any): Promise<LoginResponse> {
     try {
-      const { nickname, phone } = req.user;
-      const { accessToken } = await this.authService.getJwtAccessToken({
-        nickname,
+      const { id, phone } = req.user;
+      const accessToken = await this.authService.getJwtAccessToken({
+        id,
         phone,
       });
       return { accessToken };
@@ -58,17 +54,5 @@ export class AuthController {
   @Get('/profile')
   public async getProfile(@Req() req: any): Promise<GetProfileResponse> {
     return req.user;
-  }
-
-  @Delete('/logout')
-  public async logoutUser(
-    @Res({ passthrough: true }) res,
-  ): Promise<StatusResponse> {
-    try {
-      res.cookie('Authorization', '', { maxAge: 0 });
-    } catch (err) {
-      throw new HttpException(err, HttpStatus.BAD_REQUEST);
-    }
-    return response;
   }
 }

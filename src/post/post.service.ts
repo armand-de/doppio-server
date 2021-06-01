@@ -5,14 +5,15 @@ import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from './interface/status-response.interface';
 
-const response = { success: true };
-const getUserSelectList: (keyof Post)[] = [
+const SUCCESS_RESPONSE = { success: true };
+const POST_SELECT: (keyof Post)[] = [
   'id',
   'title',
   'image',
   'contents',
   'createdDate',
 ];
+const POST_LIST_STEP_POINT = 15;
 
 @Injectable()
 export class PostService {
@@ -20,17 +21,24 @@ export class PostService {
     @InjectRepository(Post) private postRepository: Repository<Post>,
   ) {}
 
+  async getPostList(step: number): Promise<Post[]> {
+    return await this.postRepository.find({
+      skip: POST_LIST_STEP_POINT * (step - 1),
+      take: POST_LIST_STEP_POINT * step,
+    });
+  }
+
   async getPostById(id: string): Promise<Post> {
     return await this.postRepository.findOne({
       where: { id },
-      select: getUserSelectList,
+      select: POST_SELECT,
     });
   }
 
   async getPostIncludeUserById(id: string): Promise<Post> {
     return await this.postRepository.findOne({
       where: { id },
-      select: ['user', ...getUserSelectList],
+      select: ['user', ...POST_SELECT],
     });
   }
 
@@ -41,6 +49,15 @@ export class PostService {
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
-    return response;
+    return SUCCESS_RESPONSE;
+  }
+
+  async deletePost(id: string): Promise<StatusResponse> {
+    try {
+      await this.postRepository.delete({ id });
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return SUCCESS_RESPONSE;
   }
 }

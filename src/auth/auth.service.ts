@@ -13,7 +13,6 @@ import { CreateVerifyUserDto } from './dto/create-verify-user.dto';
 import { StatusResponse } from './interface/status-response.interface';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { UserService } from '../user/user.service';
-import { LoginResponse } from './interface/login-response.interface';
 import { JwtService } from '@nestjs/jwt';
 import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
 import { UpdateVerifyUserDto } from './dto/update-verify-user.dto';
@@ -73,11 +72,8 @@ export class AuthService {
     return response;
   }
 
-  async getJwtAccessToken(
-    payload: GetJwtAccessTokenDto,
-  ): Promise<LoginResponse> {
-    const accessToken = await this.jwtService.sign(payload);
-    return { accessToken };
+  async getJwtAccessToken(payload: GetJwtAccessTokenDto): Promise<string> {
+    return this.jwtService.sign(payload);
   }
 
   private async createVerifyUser(

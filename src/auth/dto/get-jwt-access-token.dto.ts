@@ -1,8 +1,8 @@
-import { IntersectionType } from '@nestjs/mapped-types';
-import { NicknameDto } from '../../user/dto/nickname.dto';
+import { IsString, IsUUID } from 'class-validator';
 import { PhoneDto } from '../../user/dto/phone.dto';
 
-export class GetJwtAccessTokenDto extends IntersectionType(
-  NicknameDto,
-  PhoneDto,
-) {}
+export class GetJwtAccessTokenDto extends PhoneDto {
+  @IsString()
+  @IsUUID()
+  readonly id: string;
+}

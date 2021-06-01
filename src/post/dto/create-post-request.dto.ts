@@ -3,7 +3,6 @@ import {
   IsOptional,
   IsString,
   MaxLength,
-  ValidateIf
 } from 'class-validator';
 
 export class CreatePostRequestDto {
@@ -17,7 +16,6 @@ export class CreatePostRequestDto {
   readonly image: string;
 
   @IsNotEmpty()
-  @ValidateIf((text: string) => text.trim() !== '')
   @IsString()
   readonly contents: string;
 }

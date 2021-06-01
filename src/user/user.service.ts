@@ -13,7 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PhoneDto } from './dto/phone.dto';
 import { NicknameDto } from './dto/nickname.dto';
 
-const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image'];
+const getUserSelectList: (keyof User)[] = ['nickname', 'phone', 'image', 'id'];
 
 @Injectable()
 export class UserService {
