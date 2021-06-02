@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Recipe } from '../../recipe/entity/recipe.entity';
 import { Post } from '../../post/entity/post.entity';
-import { RecipeBookmark } from '../../recipe/entity/recipe-bookmark.entity';
 import { RecipePreference } from '../../recipe/entity/recipe-preference.entity';
 import { PostEvaluation } from '../../post/entity/post-evaluation.entity';
 import { Comment } from '../../post/entity/comment.entity';
@@ -37,12 +36,6 @@ export class User {
 
   @OneToMany((type) => Recipe, (recipe: Recipe) => recipe.user)
   recipes: Recipe[];
-
-  @OneToMany(
-    (type) => RecipeBookmark,
-    (recipe_bookmark: RecipeBookmark) => recipe_bookmark.user,
-  )
-  recipe_bookmarks: RecipeBookmark[];
 
   @OneToMany(
     (type) => RecipePreference,

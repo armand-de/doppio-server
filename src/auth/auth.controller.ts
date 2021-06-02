@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 import { JoinUserDto } from './dto/join-user.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { GetProfileResponse } from './interface/get-profile-response.interface';
-import { StatusResponse } from './interface/status-response.interface';
+import { StatusResponse } from '../types/status-response';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LoginResponse } from './interface/login-response.interface';

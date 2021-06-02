@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import twilio from 'twilio';
+import { ConfigService } from '@nestjs/config';
+import bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { JoinResponse } from './interface/join-response.interface';
 import { Verify } from './entity/verify.entity';
-import twilio from 'twilio';
-import { ConfigService } from '@nestjs/config';
 import { JoinUserDto } from './dto/join-user.dto';
-import bcrypt from 'bcrypt';
 import { CreateVerifyUserDto } from './dto/create-verify-user.dto';
-import { StatusResponse } from './interface/status-response.interface';
+import { StatusResponse } from '../types/status-response';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { UserService } from '../user/user.service';
-import { JwtService } from '@nestjs/jwt';
 import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
 import { UpdateVerifyUserDto } from './dto/update-verify-user.dto';
 import { SUCCESS_RESPONSE } from '../utils/success-response';

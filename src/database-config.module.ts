@@ -6,7 +6,6 @@ import { Post } from './post/entity/post.entity';
 import { Comment } from './post/entity/comment.entity';
 import { Recipe } from './recipe/entity/recipe.entity';
 import { RecipePreference } from './recipe/entity/recipe-preference.entity';
-import { RecipeBookmark } from './recipe/entity/recipe-bookmark.entity';
 import { PostEvaluation } from './post/entity/post-evaluation.entity';
 
 @Module({
@@ -25,7 +24,6 @@ import { PostEvaluation } from './post/entity/post-evaluation.entity';
           Comment,
           Recipe,
           RecipePreference,
-          RecipeBookmark,
           PostEvaluation,
         ],
         synchronize: true,

@@ -9,7 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
-import { RecipeBookmark } from './recipe-bookmark.entity';
 import { RecipePreference } from './recipe-preference.entity';
 
 @Entity('recipes')
@@ -32,18 +31,15 @@ export class Recipe {
   @Column('tinyint', { nullable: false })
   category: number;
 
+  @Column('boolean', { nullable: false, default: false })
+  useOven: boolean;
+
   @Column('int', { nullable: false })
   time: number;
 
   @ManyToOne((type) => User, (user: User) => user.recipes)
   @JoinColumn({ name: 'userId' })
   user: User;
-
-  @OneToMany(
-    (type) => RecipeBookmark,
-    (recipe_bookmark: RecipeBookmark) => recipe_bookmark.recipe,
-  )
-  recipe_bookmarks: RecipeBookmark[];
 
   @OneToMany(
     (type) => RecipePreference,

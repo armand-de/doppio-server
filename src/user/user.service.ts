@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
@@ -12,8 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PhoneDto } from './dto/phone.dto';
 import { NicknameDto } from './dto/nickname.dto';
-
-const USER_SELECT: (keyof User)[] = ['nickname', 'phone', 'image', 'id'];
+import { USER_SELECT } from '../utils/data-select';
 
 @Injectable()
 export class UserService {

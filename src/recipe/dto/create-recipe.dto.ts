@@ -1,33 +1,8 @@
-import {
-  IsNumber,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IntersectionType } from '@nestjs/mapped-types';
+import { CreateRecipeRequestDto } from './create-recipe-request.dto';
+import { UserIdDto } from '../../user/dto/user-id.dto';
 
-export class CreateRecipeDto {
-  @MinLength(3)
-  @MaxLength(20)
-  @IsString()
-  readonly name: string;
-
-  @IsOptional()
-  @MaxLength(200)
-  @IsString()
-  readonly image: string;
-
-  @IsOptional()
-  @MaxLength(30)
-  @IsString()
-  readonly description: string;
-
-  @IsString()
-  readonly contents: string;
-
-  @IsNumber()
-  readonly category: number;
-
-  @IsNumber()
-  readonly time: number;
-}
+export class CreateRecipeDto extends IntersectionType(
+  CreateRecipeRequestDto,
+  UserIdDto,
+) {}

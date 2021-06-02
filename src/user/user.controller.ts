@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { User } from './entity/user.entity';
 import { PhoneDto } from './dto/phone.dto';
 import { NicknameDto } from './dto/nickname.dto';
-import { GetIsExistUserResponse } from "./entity/get-is-exist-user-response.interface";
+import { GetIsExistUserResponse } from './interface/get-is-exist-user-response.interface';
 
 @Controller('user')
 export class UserController {

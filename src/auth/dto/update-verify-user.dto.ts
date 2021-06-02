@@ -5,4 +5,4 @@ export class UpdateVerifyUserDto extends VerifyNumberDto {
   @IsString()
   @IsUUID()
   readonly id: string;
-};
+}
