@@ -19,10 +19,10 @@ export class Recipe {
   @Column({ length: 20, nullable: false })
   name: string;
 
-  @Column({ length: 200, nullable: true })
+  @Column('text', { nullable: true })
   image: string;
 
-  @Column({ length: 30, nullable: true })
+  @Column({ length: 100, nullable: true })
   description: string;
 
   @Column('text', { nullable: false })

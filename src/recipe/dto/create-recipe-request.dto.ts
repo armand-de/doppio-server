@@ -4,7 +4,6 @@ import {
   IsOptional,
   IsString,
   Length,
-  MaxLength
 } from 'class-validator';
 
 export class CreateRecipeRequestDto {
@@ -16,8 +15,7 @@ export class CreateRecipeRequestDto {
   @IsString()
   readonly image: string;
 
-  @IsOptional()
-  @MaxLength(30)
+  @Length(1, 100)
   @IsString()
   readonly description: string;
 
