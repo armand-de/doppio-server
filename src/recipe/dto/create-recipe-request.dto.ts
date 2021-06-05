@@ -20,6 +20,9 @@ export class CreateRecipeRequestDto {
   readonly description: string;
 
   @IsString()
+  readonly ingredients: string;
+
+  @IsString()
   readonly contents: string;
 
   @IsNumber()

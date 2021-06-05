@@ -26,6 +26,9 @@ export class Recipe {
   description: string;
 
   @Column('text', { nullable: false })
+  ingredients: string;
+
+  @Column('text', { nullable: false })
   contents: string;
 
   @Column('tinyint', { nullable: false })

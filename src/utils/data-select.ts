@@ -21,6 +21,7 @@ export const RECIPE_GET_SELECT: (keyof Recipe)[] = [
   'useOven',
   'description',
   'image',
+  'ingredients',
   'contents',
   'category',
   'createdDate',

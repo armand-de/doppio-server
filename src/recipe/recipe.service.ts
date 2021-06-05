@@ -19,9 +19,10 @@ export class RecipeService {
   ) {}
 
   async getRecipeList(step: number): Promise<Recipe[]> {
+    const amount = await this.getAmountOfRecipe();
     return await this.recipeRepository.find({
-      skip: RECIPE_LIST_STEP_POINT * (step - 1),
-      take: RECIPE_LIST_STEP_POINT * step,
+      skip: (step - 1) * RECIPE_LIST_STEP_POINT,
+      take: step * RECIPE_LIST_STEP_POINT,
       select: RECIPE_LIST_SELECT,
     });
   }
@@ -31,6 +32,10 @@ export class RecipeService {
       where: { id },
       select: RECIPE_GET_SELECT,
     });
+  }
+
+  async getAmountOfRecipe(): Promise<number> {
+    return await this.recipeRepository.count();
   }
 
   async getRecipeIncludeUserById(id: string): Promise<Recipe> {
