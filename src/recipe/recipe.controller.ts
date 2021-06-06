@@ -100,9 +100,9 @@ export class RecipeController {
     @Req() req: any,
     @Body() createRecipeRequestDto: CreateRecipeRequestDto,
   ): Promise<StatusResponse> {
-    const { id } = req.user;
+    const { id: userId } = req.user;
     return await this.recipeService.createRecipe({
-      userId: id,
+      userId,
       ...createRecipeRequestDto,
     });
   }

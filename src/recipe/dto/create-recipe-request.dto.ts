@@ -3,13 +3,18 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  Length,
+  Length, MaxLength
 } from 'class-validator';
 
 export class CreateRecipeRequestDto {
   @Length(3, 20)
   @IsString()
   readonly name: string;
+
+  @MaxLength(200)
+  @IsOptional()
+  @IsString()
+  readonly thumbnail: string;
 
   @IsOptional()
   @IsString()

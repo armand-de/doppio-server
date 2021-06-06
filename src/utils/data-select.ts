@@ -11,12 +11,14 @@ export const RECIPE_LIST_SELECT: (keyof Recipe)[] = [
   'useOven',
   'category',
   'image',
+  'thumbnail',
 ];
 
 export const RECIPE_GET_SELECT: (keyof Recipe)[] = [
   'id',
   'name',
   'time',
+  'thumbnail',
   'user',
   'useOven',
   'description',
@@ -31,7 +33,7 @@ export const POST_LIST_SELECT: (keyof Post)[] = [
   'id',
   'title',
   'image',
-  'createdDate'
+  'createdDate',
 ];
 
 export const POST_GET_SELECT: (keyof Post)[] = [

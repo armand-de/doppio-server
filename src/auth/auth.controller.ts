@@ -16,13 +16,20 @@ import { StatusResponse } from '../types/status-response';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LoginResponse } from './interface/login-response.interface';
+import { SUCCESS_RESPONSE } from '../utils/success-response';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('/')
+  async authorization(): Promise<StatusResponse> {
+    return SUCCESS_RESPONSE;
+  }
+
   @Post('/join')
-  public async joinUser(
+  async joinUser(
     @Body() joinUserDto: JoinUserDto,
   ): Promise<StatusResponse> {
     return await this.authService.joinUser(joinUserDto);
