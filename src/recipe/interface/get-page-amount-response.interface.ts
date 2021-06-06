@@ -1,3 +1,3 @@
 export interface GetPageAmountResponse {
-  amount: number;
+  count: number;
 }

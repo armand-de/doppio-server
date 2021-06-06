@@ -37,31 +37,31 @@ export class RecipeController {
     return await this.recipeService.getRecipeIncludePreferenceCountList(step);
   }
 
-  @Get('/list/amount/page')
+  @Get('/list/count/page')
   async getAmountOfRecipePage(): Promise<GetPageAmountResponse> {
     return {
-      amount: await this.recipeService.getAmountOfRecipePage(),
+      count: await this.recipeService.getAmountOfRecipePage(),
     };
   }
 
-  @Get('/get/id/:id')
+  @Get('/find/id/:id')
   async getRecipeById(@Param('id') id: string): Promise<Recipe> {
     return await this.recipeService.getRecipeById(id);
   }
 
-  @Get('/get/id/:id/preference')
+  @Get('/find/id/:id/preference')
   async getRecipeIncludeNumberOfPreferenceById(
     @Param('id') id: string,
   ): Promise<Recipe> {
     return await this.recipeService.getRecipeIncludePreferenceCountById(id);
   }
 
-  @Get('/get/id/:id/user')
+  @Get('/find/id/:id/user')
   async getRecipeIncludeUserById(@Param('id') id: string): Promise<Recipe> {
     return await this.recipeService.getRecipeIncludeUserById(id);
   }
 
-  @Get('/get/preference/:id')
+  @Get('/find/preference/:id')
   async getRecipePreferenceByRecipeId(
     @Param('id') id: string,
   ): Promise<RecipePreference> {
