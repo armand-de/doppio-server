@@ -5,7 +5,6 @@ import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from '../types/status-response';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
-import { UserService } from '../user/user.service';
 import { POST_GET_SELECT, POST_LIST_SELECT } from '../utils/data-select';
 import {
   selectUserListPipeline,
@@ -18,7 +17,6 @@ const POST_LIST_STEP_POINT = 15;
 export class PostService {
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
-    private readonly userService: UserService,
   ) {}
 
   async getPostList(step: number): Promise<Post[]> {

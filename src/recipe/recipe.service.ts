@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from "typeorm";
 import { Recipe } from './entity/recipe.entity';
 import { StatusResponse } from '../types/status-response';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -10,7 +10,7 @@ import { selectUserPipeline } from '../utils/select-user-pipeline';
 import { RecipePreference } from './entity/recipe-preference.entity';
 import { DeleteRecipePreferenceDto } from './dto/delete-recipe-preference.dto';
 import { CreateRecipePreferenceDto } from './dto/create-recipe-preference.dto';
-import { RecipeIncludePreferenceCount } from './interface/recipe-include-preference-count.interface';
+import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
 
 const RECIPE_LIST_STEP_POINT = 15;
 
@@ -32,14 +32,14 @@ export class RecipeService {
 
   async getRecipeIncludePreferenceCountList(
     step: number,
-  ): Promise<RecipeIncludePreferenceCount[]> {
-    const recipeList: RecipeIncludePreferenceCount[] = await this.getRecipeList(
+  ): Promise<RecipeIncludePreference[]> {
+    const recipeList: RecipeIncludePreference[] = await this.getRecipeList(
       step,
     );
     const recipeIncludePreferenceCountList = [];
     if (recipeList.length) {
       for (let idx = 0; idx < recipeList.length; idx++) {
-        const preference = await this.getRecipePreferenceCountByRecipeId(
+        const preference = await this.getPreferenceByRecipeId(
           recipeList[idx].id,
         );
         recipeIncludePreferenceCountList.push({
@@ -51,22 +51,16 @@ export class RecipeService {
     return recipeIncludePreferenceCountList;
   }
 
-  async getRecipeById(id: string): Promise<Recipe> {
-    return await this.recipeRepository.findOne({
+  async getRecipeById(id: string): Promise<RecipeIncludePreference> {
+    const recipe = await this.recipeRepository.findOne({
       where: { id },
       select: RECIPE_GET_SELECT,
     });
+    const preference = await this.getPreferenceByRecipeId(id);
+    return { preference, ...recipe };
   }
 
-  async getRecipeIncludePreferenceCountById(
-    id: string,
-  ): Promise<RecipeIncludePreferenceCount> {
-    const recipe = await this.getRecipeById(id);
-    const preference = await this.getRecipePreferenceCountByRecipeId(id);
-    return { ...recipe, preference };
-  }
-
-  async getRecipePreferenceCountByRecipeId(recipeId): Promise<number> {
+  async getPreferenceByRecipeId(recipeId): Promise<number> {
     return await this.recipePreferenceRepository.count({
       where: {
         recipe: recipeId,
@@ -104,13 +98,23 @@ export class RecipeService {
     return await this.recipeRepository.count();
   }
 
-  async getRecipeIncludeUserById(id: string): Promise<Recipe> {
-    const data = await this.recipeRepository.findOne({
+  async getRecipeIncludeUserById(id: string): Promise<RecipeIncludePreference> {
+    const recipe = await this.recipeRepository.findOne({
       where: { id },
       select: ['user', ...RECIPE_GET_SELECT],
       relations: ['user'],
     });
-    return selectUserPipeline(data);
+    const preference = await this.getPreferenceByRecipeId(id);
+    return selectUserPipeline({ preference, ...recipe });
+  }
+
+  async searchRecipe(keyword: string): Promise<Recipe[]> {
+    return await this.recipeRepository.find({
+      where: {
+        name: Like(`%${keyword}%`),
+      },
+      select: RECIPE_LIST_SELECT,
+    });
   }
 
   async createRecipePreference(

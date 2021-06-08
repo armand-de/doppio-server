@@ -3,10 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
 import { Post } from './post/entity/post.entity';
-import { Comment } from './post/entity/comment.entity';
+import { Comment } from './comment/entity/comment.entity';
 import { Recipe } from './recipe/entity/recipe.entity';
 import { RecipePreference } from './recipe/entity/recipe-preference.entity';
-import { PostEvaluation } from './post/entity/post-evaluation.entity';
+import { PostPreference } from './post/entity/post-preference.entity';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { PostEvaluation } from './post/entity/post-evaluation.entity';
           Comment,
           Recipe,
           RecipePreference,
-          PostEvaluation,
+          PostPreference,
         ],
         synchronize: true,
         type: 'mysql',

@@ -14,6 +14,8 @@ import { StatusResponse } from '../types/status-response';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CreatePostRequestDto } from './dto/create-post-request.dto';
 import { Post as PostEntity } from './entity/post.entity';
+import { PostResponse } from './interface/post-response.interface';
+import { PostPreference } from "./entity/post-preference.entity";
 
 @Controller('post')
 export class PostController {
@@ -29,17 +31,17 @@ export class PostController {
   @Get('/list/:step/user')
   async getPostListIncludeUser(
     @Param('step', ParseIntPipe) step: number,
-  ): Promise<PostEntity[]> {
+  ): Promise<PostResponse[]> {
     return await this.postService.getPostListIncludeUser(step);
   }
 
-  @Get('/get/id/:id')
-  async getPostById(@Param('id') id: string): Promise<PostEntity> {
+  @Get('/find/id/:id')
+  async getPostById(@Param('id') id: string): Promise<PostResponse> {
     return await this.postService.getPostById(id);
   }
 
-  @Get('/get/id/:id/user')
-  async getPostIncludeUserById(@Param('id') id: string): Promise<PostEntity> {
+  @Get('/find/id/:id/user')
+  async getPostIncludeUserById(@Param('id') id: string): Promise<PostResponse> {
     return await this.postService.getPostIncludeUserById(id);
   }
 
@@ -49,9 +51,9 @@ export class PostController {
     @Req() req: any,
     @Body() createPostRequestDto: CreatePostRequestDto,
   ): Promise<StatusResponse> {
-    const { id } = req.user;
+    const { id: userId } = req.user;
     return await this.postService.createPost({
-      userId: id,
+      userId,
       ...createPostRequestDto,
     });
   }

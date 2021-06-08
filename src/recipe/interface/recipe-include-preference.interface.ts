@@ -1,5 +1,5 @@
 import { Recipe } from '../entity/recipe.entity';
 
-export interface RecipeIncludePreferenceCount extends Recipe {
+export interface RecipeIncludePreference extends Recipe {
   preference?: number;
 }

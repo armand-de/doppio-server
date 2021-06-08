@@ -9,8 +9,8 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
-import { Comment } from './comment.entity';
-import { PostEvaluation } from './post-evaluation.entity';
+import { Comment } from '../../comment/entity/comment.entity';
+import { PostPreference } from './post-preference.entity';
 
 @Entity('posts')
 export class Post {
@@ -30,10 +30,10 @@ export class Post {
   comments: Comment[];
 
   @OneToMany(
-    (type) => PostEvaluation,
-    (post_evaluation: PostEvaluation) => post_evaluation.post,
+    (type) => PostPreference,
+    (post_preference: PostPreference) => post_preference.post,
   )
-  post_evaluations: PostEvaluation[];
+  post_preference: PostPreference[];
 
   @ManyToOne((type) => User, (user: User) => user.posts)
   @JoinColumn({ name: 'userId' })

@@ -9,8 +9,8 @@ import {
 import { Recipe } from '../../recipe/entity/recipe.entity';
 import { Post } from '../../post/entity/post.entity';
 import { RecipePreference } from '../../recipe/entity/recipe-preference.entity';
-import { PostEvaluation } from '../../post/entity/post-evaluation.entity';
-import { Comment } from '../../post/entity/comment.entity';
+import { PostPreference } from "../../post/entity/post-preference.entity";
+import { Comment } from '../../comment/entity/comment.entity';
 
 @Entity('users')
 export class User {
@@ -47,10 +47,10 @@ export class User {
   posts: Post[];
 
   @OneToMany(
-    (type) => PostEvaluation,
-    (post_evaluation: PostEvaluation) => post_evaluation.user,
+    (type) => PostPreference,
+    (post_preference: PostPreference) => post_preference.user,
   )
-  post_evaluations: PostEvaluation[];
+  post_preference: PostPreference[];
 
   @OneToMany((type) => Comment, (comment: Comment) => comment.user)
   comments: Comment[];

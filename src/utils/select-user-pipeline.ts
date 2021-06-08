@@ -1,7 +1,7 @@
 export function selectUserPipeline(object: any) {
   delete object.user['password'];
   delete object.user['updatedDate'];
-  // delete object.user['phone'];
+  delete object.user['phone'];
   delete object.user['createdDate'];
   return object;
 }
