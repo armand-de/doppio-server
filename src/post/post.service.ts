@@ -60,9 +60,8 @@ export class PostService {
     ...createPostDto
   }: CreatePostDto): Promise<StatusResponse> {
     try {
-      const user = await this.userService.getUserById(userId);
       const newPost = await this.postRepository.create({
-        user,
+        user: { id: userId },
         ...createPostDto,
       });
       await this.postRepository.save(newPost);

@@ -10,7 +10,6 @@ export const RECIPE_LIST_SELECT: (keyof Recipe)[] = [
   'time',
   'useOven',
   'category',
-  'image',
   'thumbnail',
 ];
 

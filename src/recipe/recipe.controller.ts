@@ -101,6 +101,7 @@ export class RecipeController {
     @Body() createRecipeRequestDto: CreateRecipeRequestDto,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
+    console.log(userId);
     return await this.recipeService.createRecipe({
       userId,
       ...createRecipeRequestDto,
