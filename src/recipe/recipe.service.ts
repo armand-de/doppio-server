@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from "typeorm";
+import { Like, Repository } from 'typeorm';
 import { Recipe } from './entity/recipe.entity';
 import { StatusResponse } from '../types/status-response';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -11,6 +11,7 @@ import { RecipePreference } from './entity/recipe-preference.entity';
 import { DeleteRecipePreferenceDto } from './dto/delete-recipe-preference.dto';
 import { CreateRecipePreferenceDto } from './dto/create-recipe-preference.dto';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
+import { DeleteRecipeDto } from './dto/delete-recipe.dto';
 
 const RECIPE_LIST_STEP_POINT = 15;
 
@@ -30,25 +31,11 @@ export class RecipeService {
     });
   }
 
-  async getRecipeIncludePreferenceCountList(
+  async getRecipeIncludePreferenceList(
     step: number,
   ): Promise<RecipeIncludePreference[]> {
-    const recipeList: RecipeIncludePreference[] = await this.getRecipeList(
-      step,
-    );
-    const recipeIncludePreferenceCountList = [];
-    if (recipeList.length) {
-      for (let idx = 0; idx < recipeList.length; idx++) {
-        const preference = await this.getPreferenceByRecipeId(
-          recipeList[idx].id,
-        );
-        recipeIncludePreferenceCountList.push({
-          ...recipeList[idx],
-          preference,
-        });
-      }
-    }
-    return recipeIncludePreferenceCountList;
+    const recipeList: Recipe[] = await this.getRecipeList(step);
+    return await this.recipePreferenceListPipeline(recipeList);
   }
 
   async getRecipeById(id: string): Promise<RecipeIncludePreference> {
@@ -56,22 +43,20 @@ export class RecipeService {
       where: { id },
       select: RECIPE_GET_SELECT,
     });
-    const preference = await this.getPreferenceByRecipeId(id);
-    return { preference, ...recipe };
+    return await this.recipePreferencePipeline(recipe);
   }
 
-  async getPreferenceByRecipeId(recipeId): Promise<number> {
+  async getPreferenceCountByRecipeId(id: string): Promise<number> {
     return await this.recipePreferenceRepository.count({
-      where: {
-        recipe: recipeId,
-      },
+      where: { recipe: { id } },
     });
   }
 
-  async getRecipePreferenceByRecipeId(recipeId): Promise<RecipePreference> {
+  async getMyRecipePreference({ userId, recipeId }): Promise<RecipePreference> {
     return await this.recipePreferenceRepository.findOne({
       where: {
-        recipe: recipeId,
+        user: { id: userId },
+        recipe: { id: recipeId },
       },
     });
   }
@@ -88,13 +73,13 @@ export class RecipeService {
     });
   }
 
-  async getAmountOfRecipePage(): Promise<number> {
-    const amount = await this.getAmountOfRecipe();
+  async getCountOfRecipePage(): Promise<number> {
+    const amount = await this.getCountOfRecipe();
     const pageAmount = amount / RECIPE_LIST_STEP_POINT;
     return pageAmount < 1 ? 1 : pageAmount;
   }
 
-  async getAmountOfRecipe(): Promise<number> {
+  async getCountOfRecipe(): Promise<number> {
     return await this.recipeRepository.count();
   }
 
@@ -104,8 +89,7 @@ export class RecipeService {
       select: ['user', ...RECIPE_GET_SELECT],
       relations: ['user'],
     });
-    const preference = await this.getPreferenceByRecipeId(id);
-    return selectUserPipeline({ preference, ...recipe });
+    return selectUserPipeline(await this.recipePreferencePipeline(recipe));
   }
 
   async searchRecipe(keyword: string): Promise<Recipe[]> {
@@ -115,6 +99,26 @@ export class RecipeService {
       },
       select: RECIPE_LIST_SELECT,
     });
+  }
+
+  async recipePreferencePipeline(
+    recipe: Recipe,
+  ): Promise<RecipeIncludePreference> {
+    const preference = await this.getPreferenceCountByRecipeId(recipe.id);
+    return { preference, ...recipe };
+  }
+
+  async recipePreferenceListPipeline(
+    recipeArray: Recipe[],
+  ): Promise<RecipeIncludePreference[]> {
+    const resultArray = [];
+    if (recipeArray.length) {
+      for (let idx = 0; idx < recipeArray.length; idx++) {
+        const data = await this.recipePreferencePipeline(recipeArray[idx]);
+        resultArray.push(data);
+      }
+    }
+    return resultArray;
   }
 
   async createRecipePreference(
@@ -169,6 +173,21 @@ export class RecipeService {
         ...createRecipeDto,
       });
       await this.recipeRepository.save(newRecipe);
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return SUCCESS_RESPONSE;
+  }
+
+  async deleteRecipe({
+    recipeId,
+    userId,
+  }: DeleteRecipeDto): Promise<StatusResponse> {
+    try {
+      await this.recipeRepository.delete({
+        id: recipeId,
+        user: { id: userId },
+      });
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }

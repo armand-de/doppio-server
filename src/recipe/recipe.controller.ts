@@ -13,11 +13,12 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { StatusResponse } from '../types/status-response';
 import { CreateRecipeRequestDto } from './dto/create-recipe-request.dto';
 import { Recipe } from './entity/recipe.entity';
-import { RecipePreference } from './entity/recipe-preference.entity';
 import { CreateRecipePreferenceRequestDto } from './dto/create-recipe-preference-request.dto';
 import { DeleteRecipePreferenceRequestDto } from './dto/delete-recipe-preference-request.dto';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
-import { GetPageAmountResponse } from './interface/get-page-amount-response.interface';
+import { GetCountResponse } from './interface/get-count-response.interface';
+import { DeleteRecipeRequestDto } from './dto/delete-recipe-request.dto';
+import { RecipePreference } from "./entity/recipe-preference.entity";
 
 @Controller('recipe')
 export class RecipeController {
@@ -34,18 +35,27 @@ export class RecipeController {
   async getRecipeIncludePreferenceCountList(
     @Param('step', ParseIntPipe) step: number,
   ): Promise<RecipeIncludePreference[]> {
-    return await this.recipeService.getRecipeIncludePreferenceCountList(step);
+    return await this.recipeService.getRecipeIncludePreferenceList(step);
   }
 
-  @Get('/list/count/page')
-  async getAmountOfRecipePage(): Promise<GetPageAmountResponse> {
+  @Get('/count/page')
+  async getCountOfRecipePage(): Promise<GetCountResponse> {
     return {
-      count: await this.recipeService.getAmountOfRecipePage(),
+      count: await this.recipeService.getCountOfRecipePage(),
+    };
+  }
+
+  @Get('/count')
+  async getCountOfRecipe(): Promise<GetCountResponse> {
+    return {
+      count: await this.recipeService.getCountOfRecipe(),
     };
   }
 
   @Get('/find/id/:id')
-  async getRecipeById(@Param('id') id: string): Promise<Recipe> {
+  async getRecipeById(
+    @Param('id') id: string,
+  ): Promise<RecipeIncludePreference> {
     return await this.recipeService.getRecipeById(id);
   }
 
@@ -68,18 +78,33 @@ export class RecipeController {
     @Body() createRecipeRequestDto: CreateRecipeRequestDto,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
-    console.log(userId);
     return await this.recipeService.createRecipe({
       userId,
       ...createRecipeRequestDto,
     });
   }
 
-  @Get('/find/preference/:id')
-  async getRecipePreferenceByRecipeId(
-    @Param('id') id: string,
+  @UseGuards(JwtAuthGuard)
+  @Post('/delete')
+  async deleteRecipe(
+    @Req() req: any,
+    @Body() deleteRecipeRequestDto: DeleteRecipeRequestDto,
+  ): Promise<StatusResponse> {
+    const { id: userId } = req.user;
+    return await this.recipeService.deleteRecipe({
+      userId,
+      ...deleteRecipeRequestDto,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/my/preference')
+  async getMyRecipePreference(
+    @Req() req: any,
+    @Body('recipeId') recipeId: string,
   ): Promise<RecipePreference> {
-    return await this.recipeService.getRecipePreferenceByRecipeId(id);
+    const { id: userId } = req.user;
+    return await this.recipeService.getMyRecipePreference({ userId, recipeId });
   }
 
   @UseGuards(JwtAuthGuard)
