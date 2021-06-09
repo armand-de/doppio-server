@@ -8,10 +8,9 @@ import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { RECIPE_GET_SELECT, RECIPE_LIST_SELECT } from '../utils/data-select';
 import { selectUserPipeline } from '../utils/select-user-pipeline';
 import { RecipePreference } from './entity/recipe-preference.entity';
-import { DeleteRecipePreferenceDto } from './dto/delete-recipe-preference.dto';
-import { CreateRecipePreferenceDto } from './dto/create-recipe-preference.dto';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
 import { DeleteRecipeDto } from './dto/delete-recipe.dto';
+import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
 
 const RECIPE_LIST_STEP_POINT = 15;
 
@@ -61,6 +60,7 @@ export class RecipeService {
         recipe: recipeId,
         user: userId,
       },
+      select: ['id'],
     });
   }
 
@@ -113,7 +113,7 @@ export class RecipeService {
   }
 
   async createRecipePreference(
-    createRecipePreferenceDto: CreateRecipePreferenceDto,
+    createRecipePreferenceDto: RequestRecipePreferenceDto,
   ): Promise<StatusResponse> {
     try {
       if (
@@ -137,7 +137,7 @@ export class RecipeService {
   }
 
   async deleteRecipePreference(
-    deleteRecipePreferenceDto: DeleteRecipePreferenceDto,
+    deleteRecipePreferenceDto: RequestRecipePreferenceDto,
   ): Promise<StatusResponse> {
     try {
       const id = (

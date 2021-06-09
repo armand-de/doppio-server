@@ -11,14 +11,13 @@ import {
 import { RecipeService } from './recipe.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { StatusResponse } from '../types/status-response';
-import { CreateRecipeRequestDto } from './dto/create-recipe-request.dto';
+import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { Recipe } from './entity/recipe.entity';
-import { CreateRecipePreferenceRequestDto } from './dto/create-recipe-preference-request.dto';
-import { DeleteRecipePreferenceRequestDto } from './dto/delete-recipe-preference-request.dto';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
 import { GetCountResponse } from './interface/get-count-response.interface';
-import { DeleteRecipeRequestDto } from './dto/delete-recipe-request.dto';
+import { DeleteRecipeDto } from './dto/delete-recipe.dto';
 import { RecipePreference } from './entity/recipe-preference.entity';
+import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
 
 @Controller('recipe')
 export class RecipeController {
@@ -75,12 +74,12 @@ export class RecipeController {
   @Post('/create')
   async createRecipe(
     @Req() req: any,
-    @Body() createRecipeRequestDto: CreateRecipeRequestDto,
+    @Body() createRecipeDto: CreateRecipeDto,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.createRecipe({
       userId,
-      ...createRecipeRequestDto,
+      ...createRecipeDto,
     });
   }
 
@@ -88,12 +87,12 @@ export class RecipeController {
   @Post('/delete')
   async deleteRecipe(
     @Req() req: any,
-    @Body() deleteRecipeRequestDto: DeleteRecipeRequestDto,
+    @Body() deleteRecipeDto: DeleteRecipeDto,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.deleteRecipe({
       userId,
-      ...deleteRecipeRequestDto,
+      ...deleteRecipeDto,
     });
   }
 
@@ -101,7 +100,7 @@ export class RecipeController {
   @Get('/my/preference')
   async getMyRecipePreference(
     @Req() req: any,
-    @Body('recipeId') recipeId: string,
+    @Body() { recipeId }: RequestRecipePreferenceDto,
   ): Promise<RecipePreference> {
     const { id: userId } = req.user;
     return await this.recipeService.getPreferenceByRecipeIdAndUserId({
@@ -114,7 +113,7 @@ export class RecipeController {
   @Post('/create/preference')
   async createRecipePreference(
     @Req() req: any,
-    @Body() { recipeId }: CreateRecipePreferenceRequestDto,
+    @Body() { recipeId }: RequestRecipePreferenceDto,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.createRecipePreference({
@@ -127,7 +126,7 @@ export class RecipeController {
   @Post('/delete/preference')
   async deleteRecipePreference(
     @Req() req: any,
-    @Body() { recipeId }: DeleteRecipePreferenceRequestDto,
+    @Body() { recipeId }: RequestRecipePreferenceDto,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.deleteRecipePreference({
