@@ -12,12 +12,10 @@ import {
 } from '../utils/select-user-pipeline';
 
 const POST_LIST_STEP_POINT = 15;
-function POST_LIST_OPTION(step: number): FindManyOptions<Post> {
-  return {
-    skip: POST_LIST_STEP_POINT * (step - 1),
-    take: POST_LIST_STEP_POINT * step,
-  };
-}
+const POST_LIST_OPTION = (step: number): FindManyOptions<Post> => ({
+  skip: POST_LIST_STEP_POINT * (step - 1),
+  take: POST_LIST_STEP_POINT * step,
+});
 
 @Injectable()
 export class PostService {

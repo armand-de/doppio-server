@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -16,7 +17,6 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { Recipe } from './entity/recipe.entity';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
 import { GetCountResponse } from './interface/get-count-response.interface';
-import { DeleteRecipeDto } from './dto/delete-recipe.dto';
 import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
 import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
 
@@ -105,16 +105,9 @@ export class RecipeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/delete')
-  async deleteRecipe(
-    @Req() req: any,
-    @Body() deleteRecipeDto: DeleteRecipeDto,
-  ): Promise<StatusResponse> {
-    const { id: userId } = req.user;
-    return await this.recipeService.deleteRecipe({
-      userId,
-      ...deleteRecipeDto,
-    });
+  @Delete('/delete/:id')
+  async deleteRecipe(@Param('id') id: string): Promise<StatusResponse> {
+    return await this.recipeService.deleteRecipe(id);
   }
 
   @UseGuards(JwtAuthGuard)

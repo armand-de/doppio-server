@@ -3,12 +3,12 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseBoolPipe,
   ParseIntPipe,
-  Post,
+  Post, Query,
   Req,
-  UseGuards,
-} from '@nestjs/common';
+  UseGuards
+} from "@nestjs/common";
 import { PostService } from './post.service';
 import { StatusResponse } from '../types/status-response';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
@@ -20,28 +20,26 @@ import { CreatePostDto } from './dto/create-post.dto';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Get('/list/:step')
+  @Get('/list')
   async getPostList(
-    @Param('step', ParseIntPipe) step: number,
+    @Query('step', ParseIntPipe) step: number,
+    @Query('user', ParseBoolPipe) user: boolean,
   ): Promise<PostEntity[]> {
+    if (user) {
+      return await this.postService.getPostListIncludeUser(step);
+    }
     return await this.postService.getPostList(step);
   }
 
-  @Get('/list/:step/user')
-  async getPostListIncludeUser(
-    @Param('step', ParseIntPipe) step: number,
-  ): Promise<PostResponse[]> {
-    return await this.postService.getPostListIncludeUser(step);
-  }
-
   @Get('/find/id/:id')
-  async getPostById(@Param('id') id: string): Promise<PostResponse> {
+  async getPostById(
+    @Param('id') id: string,
+    @Query('user') user: boolean,
+  ): Promise<PostResponse> {
+    if (user) {
+      return await this.postService.getPostIncludeUserById(id);
+    }
     return await this.postService.getPostById(id);
-  }
-
-  @Get('/find/id/:id/user')
-  async getPostIncludeUserById(@Param('id') id: string): Promise<PostResponse> {
-    return await this.postService.getPostIncludeUserById(id);
   }
 
   @UseGuards(JwtAuthGuard)

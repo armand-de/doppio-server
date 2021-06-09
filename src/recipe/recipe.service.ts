@@ -9,17 +9,14 @@ import { RECIPE_GET_SELECT, RECIPE_LIST_SELECT } from '../utils/data-select';
 import { selectUserPipeline } from '../utils/select-user-pipeline';
 import { RecipePreference } from './entity/recipe-preference.entity';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
-import { DeleteRecipeDto } from './dto/delete-recipe.dto';
 import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
 
 const RECIPE_LIST_STEP_POINT = 15;
-function RECIPE_LIST_OPTION(step: number): FindManyOptions<Recipe> {
-  return {
-    skip: (step - 1) * RECIPE_LIST_STEP_POINT,
-    take: step * RECIPE_LIST_STEP_POINT,
-    select: RECIPE_LIST_SELECT,
-  };
-}
+const RECIPE_LIST_OPTION = (step: number): FindManyOptions<Recipe> => ({
+  skip: (step - 1) * RECIPE_LIST_STEP_POINT,
+  take: step * RECIPE_LIST_STEP_POINT,
+  select: RECIPE_LIST_SELECT,
+});
 
 @Injectable()
 export class RecipeService {
@@ -190,15 +187,9 @@ export class RecipeService {
     return SUCCESS_RESPONSE;
   }
 
-  async deleteRecipe({
-    recipeId,
-    userId,
-  }: DeleteRecipeDto): Promise<StatusResponse> {
+  async deleteRecipe(id: string): Promise<StatusResponse> {
     try {
-      await this.recipeRepository.delete({
-        id: recipeId,
-        user: { id: userId },
-      });
+      await this.recipeRepository.delete({ id });
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
