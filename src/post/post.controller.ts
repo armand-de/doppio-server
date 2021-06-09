@@ -12,10 +12,9 @@ import {
 import { PostService } from './post.service';
 import { StatusResponse } from '../types/status-response';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { CreatePostRequestDto } from './dto/create-post-request.dto';
 import { Post as PostEntity } from './entity/post.entity';
 import { PostResponse } from './interface/post-response.interface';
-import { PostPreference } from "./entity/post-preference.entity";
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Controller('post')
 export class PostController {
@@ -49,12 +48,12 @@ export class PostController {
   @Post('/create')
   async createPost(
     @Req() req: any,
-    @Body() createPostRequestDto: CreatePostRequestDto,
+    @Body() createPostDto: CreatePostDto,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.postService.createPost({
       userId,
-      ...createPostRequestDto,
+      ...createPostDto,
     });
   }
 

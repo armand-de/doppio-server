@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Recipe } from './entity/recipe.entity';
 import { StatusResponse } from '../types/status-response';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -13,6 +13,13 @@ import { DeleteRecipeDto } from './dto/delete-recipe.dto';
 import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
 
 const RECIPE_LIST_STEP_POINT = 15;
+function RECIPE_LIST_OPTION(step: number): FindManyOptions<Recipe> {
+  return {
+    skip: (step - 1) * RECIPE_LIST_STEP_POINT,
+    take: step * RECIPE_LIST_STEP_POINT,
+    select: RECIPE_LIST_SELECT,
+  };
+}
 
 @Injectable()
 export class RecipeService {
@@ -23,14 +30,21 @@ export class RecipeService {
   ) {}
 
   async getRecipeList(step: number): Promise<Recipe[]> {
-    return await this.recipeRepository.find({
-      skip: (step - 1) * RECIPE_LIST_STEP_POINT,
-      take: step * RECIPE_LIST_STEP_POINT,
-      select: RECIPE_LIST_SELECT,
-    });
+    return await this.recipeRepository.find(RECIPE_LIST_OPTION(step));
   }
 
-  async getRecipeIncludePreferenceList(
+  async getRecipeListByCategory({
+    step,
+    category,
+  }): Promise<RecipeIncludePreference[]> {
+    const recipeList: Recipe[] = await this.recipeRepository.find({
+      ...RECIPE_LIST_OPTION(step),
+      where: { category },
+    });
+    return await this.recipePreferenceListPipeline(recipeList);
+  }
+
+  async getRecipeListIncludePreference(
     step: number,
   ): Promise<RecipeIncludePreference[]> {
     const recipeList: Recipe[] = await this.getRecipeList(step);
@@ -83,12 +97,20 @@ export class RecipeService {
     return selectUserPipeline(await this.recipePreferencePipeline(recipe));
   }
 
-  async searchRecipe(keyword: string): Promise<Recipe[]> {
+  async getCountSearchRecipe(keyword): Promise<number> {
+    return await this.recipeRepository.count({
+      where: {
+        name: Like(`%${keyword}%`),
+      },
+    });
+  }
+
+  async searchRecipe({ keyword, step }): Promise<Recipe[]> {
     return await this.recipeRepository.find({
       where: {
         name: Like(`%${keyword}%`),
       },
-      select: RECIPE_LIST_SELECT,
+      ...RECIPE_LIST_OPTION(step),
     });
   }
 

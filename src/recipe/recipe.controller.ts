@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -16,25 +17,48 @@ import { Recipe } from './entity/recipe.entity';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
 import { GetCountResponse } from './interface/get-count-response.interface';
 import { DeleteRecipeDto } from './dto/delete-recipe.dto';
-import { RecipePreference } from './entity/recipe-preference.entity';
 import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
+import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
 
 @Controller('recipe')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
-  @Get('/list/:step')
+  @Get('/list')
   async getRecipeList(
-    @Param('step', ParseIntPipe) step: number,
+    @Query('step', ParseIntPipe) step: number,
   ): Promise<Recipe[]> {
     return await this.recipeService.getRecipeList(step);
   }
 
-  @Get('/list/:step/preference')
+  @Get('/list/preference')
   async getRecipeIncludePreferenceCountList(
-    @Param('step', ParseIntPipe) step: number,
+    @Query('step', ParseIntPipe) step: number,
   ): Promise<RecipeIncludePreference[]> {
-    return await this.recipeService.getRecipeIncludePreferenceList(step);
+    return await this.recipeService.getRecipeListIncludePreference(step);
+  }
+
+  @Get('/list/category/:category')
+  async getRecipeListByCategory(
+    @Query('step', ParseIntPipe) step: number,
+    @Param('category', ParseIntPipe) category: number,
+  ): Promise<Recipe[]> {
+    return await this.recipeService.getRecipeListByCategory({ step, category });
+  }
+
+  @Get('/list/search/:keyword')
+  async searchRecipe(
+    @Query('step', ParseIntPipe) step: number,
+    @Param('keyword') keyword: string,
+  ): Promise<Recipe[]> {
+    return await this.recipeService.searchRecipe({ keyword, step });
+  }
+
+  @Get('/count')
+  async getCountOfRecipe(): Promise<GetCountResponse> {
+    return {
+      count: await this.recipeService.getCountOfRecipe(),
+    };
   }
 
   @Get('/count/page')
@@ -44,10 +68,12 @@ export class RecipeController {
     };
   }
 
-  @Get('/count')
-  async getCountOfRecipe(): Promise<GetCountResponse> {
+  @Get('/count/search/:keyword')
+  async getCountSearch(
+    @Param('keyword') keyword: string,
+  ): Promise<GetCountResponse> {
     return {
-      count: await this.recipeService.getCountOfRecipe(),
+      count: await this.recipeService.getCountSearchRecipe(keyword),
     };
   }
 
@@ -63,11 +89,6 @@ export class RecipeController {
     @Param('id') id: string,
   ): Promise<RecipeIncludePreference> {
     return await this.recipeService.getRecipeIncludeUserById(id);
-  }
-
-  @Get('/search/:keyword')
-  async searchRecipe(@Param('keyword') keyword: string): Promise<Recipe[]> {
-    return await this.recipeService.searchRecipe(keyword);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -97,16 +118,18 @@ export class RecipeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/my/preference')
-  async getMyRecipePreference(
+  @Post('/is-exist/preference/my')
+  async getMyRecipePreferenceIsExist(
     @Req() req: any,
     @Body() { recipeId }: RequestRecipePreferenceDto,
-  ): Promise<RecipePreference> {
+  ): Promise<GetIsExistResponse> {
     const { id: userId } = req.user;
-    return await this.recipeService.getPreferenceByRecipeIdAndUserId({
-      userId,
-      recipeId,
-    });
+    return {
+      isExist: !!(await this.recipeService.getPreferenceByRecipeIdAndUserId({
+        userId,
+        recipeId,
+      })),
+    };
   }
 
   @UseGuards(JwtAuthGuard)

@@ -6,7 +6,7 @@ import {
   Length,
   MaxLength,
 } from 'class-validator';
-import { OptionalUserIdDto } from './optional-user-id.dto';
+import { OptionalUserIdDto } from '../../user/dto/optional-user-id.dto';
 
 export class CreateRecipeDto extends OptionalUserIdDto {
   @IsOptional()

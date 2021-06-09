@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from '../types/status-response';
@@ -12,6 +12,12 @@ import {
 } from '../utils/select-user-pipeline';
 
 const POST_LIST_STEP_POINT = 15;
+function POST_LIST_OPTION(step: number): FindManyOptions<Post> {
+  return {
+    skip: POST_LIST_STEP_POINT * (step - 1),
+    take: POST_LIST_STEP_POINT * step,
+  };
+}
 
 @Injectable()
 export class PostService {
@@ -21,16 +27,14 @@ export class PostService {
 
   async getPostList(step: number): Promise<Post[]> {
     return await this.postRepository.find({
-      skip: POST_LIST_STEP_POINT * (step - 1),
-      take: POST_LIST_STEP_POINT * step,
+      ...POST_LIST_OPTION(step),
       select: POST_LIST_SELECT,
     });
   }
 
   async getPostListIncludeUser(step: number): Promise<Post[]> {
     const data = await this.postRepository.find({
-      skip: POST_LIST_STEP_POINT * (step - 1),
-      take: POST_LIST_STEP_POINT * step,
+      ...POST_LIST_OPTION(step),
       select: ['user', ...POST_LIST_SELECT],
       relations: ['user'],
     });
