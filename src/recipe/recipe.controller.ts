@@ -18,7 +18,7 @@ import { DeleteRecipePreferenceRequestDto } from './dto/delete-recipe-preference
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
 import { GetCountResponse } from './interface/get-count-response.interface';
 import { DeleteRecipeRequestDto } from './dto/delete-recipe-request.dto';
-import { RecipePreference } from "./entity/recipe-preference.entity";
+import { RecipePreference } from './entity/recipe-preference.entity';
 
 @Controller('recipe')
 export class RecipeController {
@@ -104,7 +104,10 @@ export class RecipeController {
     @Body('recipeId') recipeId: string,
   ): Promise<RecipePreference> {
     const { id: userId } = req.user;
-    return await this.recipeService.getMyRecipePreference({ userId, recipeId });
+    return await this.recipeService.getPreferenceByRecipeIdAndUserId({
+      userId,
+      recipeId,
+    });
   }
 
   @UseGuards(JwtAuthGuard)

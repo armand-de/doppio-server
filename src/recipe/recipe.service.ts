@@ -52,16 +52,7 @@ export class RecipeService {
     });
   }
 
-  async getMyRecipePreference({ userId, recipeId }): Promise<RecipePreference> {
-    return await this.recipePreferenceRepository.findOne({
-      where: {
-        user: { id: userId },
-        recipe: { id: recipeId },
-      },
-    });
-  }
-
-  async getRecipePreferenceByRecipeIdAndUserId({
+  async getPreferenceByRecipeIdAndUserId({
     recipeId,
     userId,
   }): Promise<RecipePreference> {
@@ -126,7 +117,7 @@ export class RecipeService {
   ): Promise<StatusResponse> {
     try {
       if (
-        !(await this.getRecipePreferenceByRecipeIdAndUserId(
+        !(await this.getPreferenceByRecipeIdAndUserId(
           createRecipePreferenceDto,
         ))
       ) {
@@ -150,9 +141,7 @@ export class RecipeService {
   ): Promise<StatusResponse> {
     try {
       const id = (
-        await this.getRecipePreferenceByRecipeIdAndUserId(
-          deleteRecipePreferenceDto,
-        )
+        await this.getPreferenceByRecipeIdAndUserId(deleteRecipePreferenceDto)
       )?.id;
       if (id) {
         await this.recipePreferenceRepository.delete({ id });
