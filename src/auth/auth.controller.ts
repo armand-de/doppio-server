@@ -29,9 +29,7 @@ export class AuthController {
   }
 
   @Post('/join')
-  async joinUser(
-    @Body() joinUserDto: JoinUserDto,
-  ): Promise<StatusResponse> {
+  async joinUser(@Body() joinUserDto: JoinUserDto): Promise<StatusResponse> {
     return await this.authService.joinUser(joinUserDto);
   }
 

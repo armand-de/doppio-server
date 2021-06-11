@@ -30,17 +30,6 @@ export class RecipeService {
     return await this.recipeRepository.find(RECIPE_LIST_OPTION(step));
   }
 
-  async getRecipeListByCategory({
-    step,
-    category,
-  }): Promise<RecipeIncludePreference[]> {
-    const recipeList: Recipe[] = await this.recipeRepository.find({
-      ...RECIPE_LIST_OPTION(step),
-      where: { category },
-    });
-    return await this.recipePreferenceListPipeline(recipeList);
-  }
-
   async getRecipeListIncludePreference(
     step: number,
   ): Promise<RecipeIncludePreference[]> {
@@ -77,6 +66,10 @@ export class RecipeService {
 
   async getCountOfRecipePage(): Promise<number> {
     const amount = await this.getCountOfRecipe();
+    return await this.getCountPagePipeline(amount);
+  }
+
+  async getCountPagePipeline(amount: number): Promise<number> {
     const pageAmount = amount / RECIPE_LIST_STEP_POINT;
     return pageAmount < 1 ? 1 : pageAmount;
   }
@@ -94,18 +87,20 @@ export class RecipeService {
     return selectUserPipeline(await this.recipePreferencePipeline(recipe));
   }
 
-  async getCountSearchRecipe(keyword): Promise<number> {
-    return await this.recipeRepository.count({
+  async getCountPageOfSearchRecipe(keyword): Promise<number> {
+    const amount = await this.recipeRepository.count({
       where: {
         name: Like(`%${keyword}%`),
       },
     });
+    return await this.getCountPagePipeline(amount);
   }
 
-  async searchRecipe({ keyword, step }): Promise<Recipe[]> {
+  async searchRecipe({ keyword, category, step }): Promise<Recipe[]> {
     return await this.recipeRepository.find({
       where: {
-        name: Like(`%${keyword}%`),
+        ...(keyword ? { name: Like(`%${keyword}%`) } : {}),
+        ...(category ? { category: parseInt(category) } : {}),
       },
       ...RECIPE_LIST_OPTION(step),
     });
@@ -149,7 +144,6 @@ export class RecipeService {
         await this.recipePreferenceRepository.save(newRecipePreference);
       }
     } catch (err) {
-      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return SUCCESS_RESPONSE;

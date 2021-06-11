@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -38,20 +40,16 @@ export class RecipeController {
     return await this.recipeService.getRecipeListIncludePreference(step);
   }
 
-  @Get('/list/category/:category')
-  async getRecipeListByCategory(
-    @Query('step', ParseIntPipe) step: number,
-    @Param('category', ParseIntPipe) category: number,
-  ): Promise<Recipe[]> {
-    return await this.recipeService.getRecipeListByCategory({ step, category });
-  }
-
-  @Get('/list/search/:keyword')
+  @Get('/list/search')
   async searchRecipe(
     @Query('step', ParseIntPipe) step: number,
-    @Param('keyword') keyword: string,
+    @Query('keyword') keyword?: string,
+    @Query('category') category?: string,
   ): Promise<Recipe[]> {
-    return await this.recipeService.searchRecipe({ keyword, step });
+    if (keyword || category) {
+      return await this.recipeService.searchRecipe({ keyword, category, step });
+    }
+    throw new HttpException('Bad request.', HttpStatus.BAD_REQUEST);
   }
 
   @Get('/count')
@@ -62,18 +60,18 @@ export class RecipeController {
   }
 
   @Get('/count/page')
-  async getCountOfRecipePage(): Promise<GetCountResponse> {
+  async getCountPageOfRecipe(): Promise<GetCountResponse> {
     return {
       count: await this.recipeService.getCountOfRecipePage(),
     };
   }
 
-  @Get('/count/search/:keyword')
-  async getCountSearch(
+  @Get('/count/page/search/:keyword')
+  async getCountPageOfSearchRecipe(
     @Param('keyword') keyword: string,
   ): Promise<GetCountResponse> {
     return {
-      count: await this.recipeService.getCountSearchRecipe(keyword),
+      count: await this.recipeService.getCountPageOfSearchRecipe(keyword),
     };
   }
 
