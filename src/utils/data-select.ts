@@ -32,12 +32,14 @@ export const POST_LIST_SELECT: (keyof Post)[] = [
   'title',
   'image',
   'createdDate',
+  'user',
 ];
 
 export const POST_GET_SELECT: (keyof Post)[] = [
   'id',
   'title',
   'image',
+  'user',
   'contents',
   'createdDate',
 ];

@@ -51,19 +51,6 @@ export class RecipeService {
     });
   }
 
-  async getPreferenceByRecipeIdAndUserId({
-    recipeId,
-    userId,
-  }): Promise<RecipePreference> {
-    return await this.recipePreferenceRepository.findOne({
-      where: {
-        recipe: recipeId,
-        user: userId,
-      },
-      select: ['id'],
-    });
-  }
-
   async getCountOfRecipePage(): Promise<number> {
     const amount = await this.getCountOfRecipe();
     return await this.getCountPagePipeline(amount);
@@ -106,35 +93,75 @@ export class RecipeService {
     });
   }
 
-  async recipePreferencePipeline(
+  private async recipePreferencePipeline(
     recipe: Recipe,
   ): Promise<RecipeIncludePreference> {
     const preference = await this.getPreferenceCountByRecipeId(recipe.id);
     return { preference, ...recipe };
   }
 
-  async recipePreferenceListPipeline(
+  private async recipePreferenceListPipeline(
     recipeArray: Recipe[],
   ): Promise<RecipeIncludePreference[]> {
     const resultArray = [];
     if (recipeArray.length) {
       for (let idx = 0; idx < recipeArray.length; idx++) {
-        const data = await this.recipePreferencePipeline(recipeArray[idx]);
-        resultArray.push(data);
+        const recipe = await this.recipePreferencePipeline(recipeArray[idx]);
+        resultArray.push(recipe);
       }
     }
     return resultArray;
+  }
+
+  async createRecipe({
+    userId,
+    ...createRecipeDto
+  }: CreateRecipeDto): Promise<StatusResponse> {
+    try {
+      const newRecipe = await this.recipeRepository.create({
+        user: { id: userId },
+        ...createRecipeDto,
+      });
+      await this.recipeRepository.save(newRecipe);
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return SUCCESS_RESPONSE;
+  }
+
+  async deleteRecipe(id: string): Promise<StatusResponse> {
+    try {
+      await this.recipeRepository.delete({ id });
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return SUCCESS_RESPONSE;
+  }
+
+  // Preference
+
+  async getPreferenceByRecipeIdAndUserId({
+    recipeId,
+    userId,
+  }): Promise<RecipePreference> {
+    return await this.recipePreferenceRepository.findOne({
+      where: {
+        recipe: recipeId,
+        user: userId,
+      },
+      select: ['id'],
+    });
   }
 
   async createRecipePreference(
     createRecipePreferenceDto: RequestRecipePreferenceDto,
   ): Promise<StatusResponse> {
     try {
-      if (
-        !(await this.getPreferenceByRecipeIdAndUserId(
+      const recipePreferenceIsExist =
+        !!(await this.getPreferenceByRecipeIdAndUserId(
           createRecipePreferenceDto,
-        ))
-      ) {
+        ));
+      if (!recipePreferenceIsExist) {
         const { userId, recipeId } = createRecipePreferenceDto;
         const newRecipePreference =
           await this.recipePreferenceRepository.create({
@@ -159,31 +186,6 @@ export class RecipeService {
       if (id) {
         await this.recipePreferenceRepository.delete({ id });
       }
-    } catch (err) {
-      throw new HttpException(err, HttpStatus.BAD_REQUEST);
-    }
-    return SUCCESS_RESPONSE;
-  }
-
-  async createRecipe({
-    userId,
-    ...createRecipeDto
-  }: CreateRecipeDto): Promise<StatusResponse> {
-    try {
-      const newRecipe = await this.recipeRepository.create({
-        user: { id: userId },
-        ...createRecipeDto,
-      });
-      await this.recipeRepository.save(newRecipe);
-    } catch (err) {
-      throw new HttpException(err, HttpStatus.BAD_REQUEST);
-    }
-    return SUCCESS_RESPONSE;
-  }
-
-  async deleteRecipe(id: string): Promise<StatusResponse> {
-    try {
-      await this.recipeRepository.delete({ id });
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }

@@ -117,8 +117,8 @@ export class RecipeController {
     const { id: userId } = req.user;
     return {
       isExist: !!(await this.recipeService.getPreferenceByRecipeIdAndUserId({
-        userId,
         recipeId,
+        userId,
       })),
     };
   }

@@ -3,18 +3,21 @@ import {
   Controller,
   Delete,
   Get,
-  Param, ParseBoolPipe,
+  Param,
   ParseIntPipe,
-  Post, Query,
+  Post,
+  Query,
   Req,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import { PostService } from './post.service';
 import { StatusResponse } from '../types/status-response';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { Post as PostEntity } from './entity/post.entity';
 import { PostResponse } from './interface/post-response.interface';
 import { CreatePostDto } from './dto/create-post.dto';
+import { RequestPostPreferenceDto } from './dto/requestPostPreference.dto';
+import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
 
 @Controller('post')
 export class PostController {
@@ -23,22 +26,12 @@ export class PostController {
   @Get('/list')
   async getPostList(
     @Query('step', ParseIntPipe) step: number,
-    @Query('user', ParseBoolPipe) user: boolean,
   ): Promise<PostEntity[]> {
-    if (user) {
-      return await this.postService.getPostListIncludeUser(step);
-    }
     return await this.postService.getPostList(step);
   }
 
   @Get('/find/id/:id')
-  async getPostById(
-    @Param('id') id: string,
-    @Query('user') user: boolean,
-  ): Promise<PostResponse> {
-    if (user) {
-      return await this.postService.getPostIncludeUserById(id);
-    }
+  async getPostById(@Param('id') id: string): Promise<PostResponse> {
     return await this.postService.getPostById(id);
   }
 
@@ -59,5 +52,46 @@ export class PostController {
   @Delete('/delete/:id')
   async deletePost(@Param('id') id: string): Promise<StatusResponse> {
     return await this.postService.deletePost(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/is-exist/preference/my')
+  async getMyPostPreferenceIsExist(
+    @Req() req: any,
+    @Body() { postId }: RequestPostPreferenceDto,
+  ): Promise<GetIsExistResponse> {
+    const { id: userId } = req.user;
+    return {
+      isExist: !!(await this.postService.getPostPreferenceByUserIdAndPostId({
+        postId,
+        userId,
+      })),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/create/preference')
+  async createPostPreference(
+    @Req() req: any,
+    @Body() { postId }: RequestPostPreferenceDto,
+  ): Promise<StatusResponse> {
+    const { id: userId } = req.user;
+    return await this.postService.createPostPreference({
+      postId,
+      userId,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/delete/preference')
+  async deletePostPreference(
+    @Req() req: any,
+    @Body() { postId }: RequestPostPreferenceDto,
+  ): Promise<StatusResponse> {
+    const { id: userId } = req.user;
+    return await this.postService.deletePostPreference({
+      postId,
+      userId,
+    });
   }
 }
