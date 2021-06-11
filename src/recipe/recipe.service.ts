@@ -56,9 +56,9 @@ export class RecipeService {
     return await this.getCountPagePipeline(amount);
   }
 
-  async getCountPagePipeline(amount: number): Promise<number> {
-    const pageAmount = amount / RECIPE_LIST_STEP_POINT;
-    return pageAmount < 1 ? 1 : pageAmount;
+  async getCountPagePipeline(count: number): Promise<number> {
+    const page = count / RECIPE_LIST_STEP_POINT;
+    return page < 1 ? 1 : page;
   }
 
   async getCountOfRecipe(): Promise<number> {

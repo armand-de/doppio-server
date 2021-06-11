@@ -18,7 +18,7 @@ import { StatusResponse } from '../types/status-response';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { Recipe } from './entity/recipe.entity';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
-import { GetCountResponse } from './interface/get-count-response.interface';
+import { GetCountResponse } from '../utils/get-count-response.interface';
 import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
 import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
 

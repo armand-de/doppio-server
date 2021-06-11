@@ -40,6 +40,20 @@ export class PostService {
     return selectUserListPipeline(postListIncludePreference);
   }
 
+  async getCountOfPost(): Promise<number> {
+    return await this.postRepository.count();
+  }
+
+  async getCountPageOfPost(): Promise<number> {
+    const count = await this.getCountOfPost();
+    return await this.getCountPagePipeline(count);
+  }
+
+  async getCountPagePipeline(count: number): Promise<number> {
+    const page = count / POST_LIST_STEP_POINT;
+    return page < 1 ? 1 : page;
+  }
+
   async getPostById(id: string): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id },

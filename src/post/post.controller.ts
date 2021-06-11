@@ -18,6 +18,7 @@ import { PostResponse } from './interface/post-response.interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { RequestPostPreferenceDto } from './dto/requestPostPreference.dto';
 import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
+import { GetCountResponse } from '../utils/get-count-response.interface';
 
 @Controller('post')
 export class PostController {
@@ -28,6 +29,18 @@ export class PostController {
     @Query('step', ParseIntPipe) step: number,
   ): Promise<PostEntity[]> {
     return await this.postService.getPostList(step);
+  }
+
+  @Get('/count')
+  async getCountOfPost(): Promise<GetCountResponse> {
+    const count = await this.postService.getCountOfPost();
+    return { count };
+  }
+
+  @Get('/count/page')
+  async getCountPageOfPost(): Promise<GetCountResponse> {
+    const count = await this.postService.getCountPageOfPost();
+    return { count };
   }
 
   @Get('/find/id/:id')
@@ -55,10 +68,10 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/is-exist/preference/my')
+  @Get('/is-exist/preference/:postId')
   async getMyPostPreferenceIsExist(
     @Req() req: any,
-    @Body() { postId }: RequestPostPreferenceDto,
+    @Param('postId') postId: string,
   ): Promise<GetIsExistResponse> {
     const { id: userId } = req.user;
     return {
@@ -83,7 +96,7 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('/delete/preference')
+  @Post('/delete/preference')
   async deletePostPreference(
     @Req() req: any,
     @Body() { postId }: RequestPostPreferenceDto,
