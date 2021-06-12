@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -14,6 +15,9 @@ import { User } from '../../user/entity/user.entity';
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Generated('increment')
+  idx: number;
 
   @Column({ length: 200, nullable: false })
   contents: string;

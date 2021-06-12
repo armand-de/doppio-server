@@ -25,7 +25,7 @@ export class CommentController {
   @Get('/list/:postId')
   async getCommentList(
     @Req() req: any,
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
     @Query('step', ParseIntPipe) step: number,
   ): Promise<Comment[]> {
     const { id: userId } = req.user;
@@ -38,7 +38,7 @@ export class CommentController {
 
   @Get('/count/list/:postId')
   async getCountOfComment(
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
   ): Promise<GetCountResponse> {
     const count = await this.commentService.getCountOfComment(postId);
     return { count };
@@ -61,7 +61,7 @@ export class CommentController {
   @Delete('/delete/:postId')
   async deleteComment(
     @Req() req: any,
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.commentService.deleteComment({ userId, postId });

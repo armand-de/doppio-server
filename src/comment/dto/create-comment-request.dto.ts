@@ -1,8 +1,8 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateCommentRequestDto {
-  @IsUUID()
-  postId: string;
+  @IsNumber()
+  postId: number;
 
   @IsString()
   contents: string;

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from '../types/status-response';
@@ -13,14 +13,14 @@ import {
 import { PostPreference } from './entity/post-preference.entity';
 import { PostIncludePreference } from './interface/post-include-preference.interface';
 import { RequestPostPreferenceDto } from './dto/requestPostPreference.dto';
+import { LIST_WHERE_OPTION } from '../utils/list-where-option';
 
 const POST_LIST_STEP_POINT = 15;
-const POST_LIST_OPTION = (step: number): FindManyOptions<Post> => ({
-  skip: POST_LIST_STEP_POINT * (step - 1),
-  take: POST_LIST_STEP_POINT * step,
+const POST_LIST_OPTION = {
+  take: POST_LIST_STEP_POINT,
   select: POST_LIST_SELECT,
   relations: ['user'],
-});
+};
 
 @Injectable()
 export class PostService {
@@ -30,9 +30,10 @@ export class PostService {
     private postPreferenceRepository: Repository<PostPreference>,
   ) {}
 
-  async getPostList(step: number): Promise<Post[]> {
+  async getPostList(start: number): Promise<Post[]> {
     const postList = await this.postRepository.find({
-      ...POST_LIST_OPTION(step),
+      where: LIST_WHERE_OPTION(start),
+      ...POST_LIST_OPTION,
     });
     const postListIncludePreference = await this.postPreferenceListPipeline(
       postList,
@@ -40,12 +41,13 @@ export class PostService {
     return selectUserListPipeline(postListIncludePreference);
   }
 
-  async searchPost({ keyword, step }): Promise<Post[]> {
+  async searchPost({ keyword, start }): Promise<Post[]> {
     const postList = await this.postRepository.find({
       where: {
         contents: Like(`%${keyword}%`),
+        ...LIST_WHERE_OPTION(start),
       },
-      ...POST_LIST_OPTION(step),
+      ...POST_LIST_OPTION,
     });
     const postListIncludePreference = await this.postPreferenceListPipeline(
       postList,
@@ -76,7 +78,7 @@ export class PostService {
     return page < 1 ? 1 : page;
   }
 
-  async getPostById(id: string): Promise<Post> {
+  async getPostById(id: number): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id },
       select: POST_GET_SELECT,
@@ -86,14 +88,14 @@ export class PostService {
     return selectUserPipeline(postIncludePreference);
   }
 
-  async getPostPreferenceCountById(id: string): Promise<number> {
-    return await this.postPreferenceRepository.count({ id });
+  async getPostPreferenceCountByPostId(id: number): Promise<number> {
+    return await this.postPreferenceRepository.count({ post: { id } });
   }
 
   private async postPreferencePipeline(
     post: Post,
   ): Promise<PostIncludePreference> {
-    const preference = await this.getPostPreferenceCountById(post.id);
+    const preference = await this.getPostPreferenceCountByPostId(post.id);
     return { preference, ...post };
   }
 
@@ -126,7 +128,7 @@ export class PostService {
     return SUCCESS_RESPONSE;
   }
 
-  async deletePost(id: string): Promise<StatusResponse> {
+  async deletePost(id: number): Promise<StatusResponse> {
     try {
       await this.postRepository.delete({ id });
     } catch (err) {

@@ -1,7 +1,6 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsNumberString } from 'class-validator';
 
 export class RecipeIdDto {
-  @IsString()
-  @IsUUID()
-  recipeId: string;
+  @IsNumberString()
+  recipeId: number;
 }

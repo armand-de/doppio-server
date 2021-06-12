@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { Comment } from '../../comment/entity/comment.entity';
@@ -14,8 +14,8 @@ import { PostPreference } from './post-preference.entity';
 
 @Entity('posts')
 export class Post {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ length: 40, nullable: false })
   title: string;

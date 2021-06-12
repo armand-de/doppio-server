@@ -9,9 +9,6 @@ import {
 import { OptionalUserIdDto } from '../../user/dto/optional-user-id.dto';
 
 export class CreateRecipeDto extends OptionalUserIdDto {
-  @IsOptional()
-  userId: string;
-
   @Length(3, 20)
   @IsString()
   readonly name: string;

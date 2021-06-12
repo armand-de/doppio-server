@@ -13,8 +13,8 @@ import { RecipePreference } from './recipe-preference.entity';
 
 @Entity('recipes')
 export class Recipe {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column({ length: 20, nullable: false })
   name: string;

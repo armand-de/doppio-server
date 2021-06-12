@@ -27,27 +27,22 @@ export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
   @Get('/list')
-  async getRecipeList(
-    @Query('step', ParseIntPipe) step: number,
-  ): Promise<Recipe[]> {
-    return await this.recipeService.getRecipeList(step);
-  }
-
-  @Get('/list/preference')
-  async getRecipeIncludePreferenceCountList(
-    @Query('step', ParseIntPipe) step: number,
-  ): Promise<RecipeIncludePreference[]> {
-    return await this.recipeService.getRecipeListIncludePreference(step);
+  async getRecipeList(@Query('start') start: number): Promise<Recipe[]> {
+    return await this.recipeService.getRecipeList(start);
   }
 
   @Get('/list/search')
   async searchRecipe(
-    @Query('step', ParseIntPipe) step: number,
+    @Query('start', ParseIntPipe) start?: number,
     @Query('keyword') keyword?: string,
     @Query('category') category?: string,
   ): Promise<Recipe[]> {
     if (keyword || category) {
-      return await this.recipeService.searchRecipe({ keyword, category, step });
+      return await this.recipeService.searchRecipe({
+        keyword,
+        category,
+        start,
+      });
     }
     throw new HttpException('Bad request.', HttpStatus.BAD_REQUEST);
   }
@@ -56,13 +51,6 @@ export class RecipeController {
   async getCountOfRecipe(): Promise<GetCountResponse> {
     return {
       count: await this.recipeService.getCountOfRecipe(),
-    };
-  }
-
-  @Get('/count/page')
-  async getCountPageOfRecipe(): Promise<GetCountResponse> {
-    return {
-      count: await this.recipeService.getCountOfRecipePage(),
     };
   }
 
@@ -77,14 +65,14 @@ export class RecipeController {
 
   @Get('/find/id/:id')
   async getRecipeById(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<RecipeIncludePreference> {
     return await this.recipeService.getRecipeById(id);
   }
 
   @Get('/find/id/:id/user')
   async getRecipeIncludeUserById(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<RecipeIncludePreference> {
     return await this.recipeService.getRecipeIncludeUserById(id);
   }
@@ -104,7 +92,9 @@ export class RecipeController {
 
   @UseGuards(JwtAuthGuard)
   @Delete('/delete/:id')
-  async deleteRecipe(@Param('id') id: string): Promise<StatusResponse> {
+  async deleteRecipe(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<StatusResponse> {
     return await this.recipeService.deleteRecipe(id);
   }
 

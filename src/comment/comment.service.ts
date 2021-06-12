@@ -7,7 +7,6 @@ import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { COMMENT_SELECT } from '../utils/data-select';
 import { selectUserListPipeline } from '../utils/select-user-pipeline';
-import { GetCountResponse } from "../utils/get-count-response.interface";
 
 const COMMENT_LIST_STEP_POINT = 30;
 
@@ -33,7 +32,7 @@ export class CommentService {
     return selectUserListPipeline(commentList);
   }
 
-  async getCountOfComment(postId: string): Promise<number> {
+  async getCountOfComment(postId: number): Promise<number> {
     return await this.commentRepository.count({
       post: { id: postId },
     });
