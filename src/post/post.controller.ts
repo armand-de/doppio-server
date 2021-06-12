@@ -31,6 +31,14 @@ export class PostController {
     return await this.postService.getPostList(step);
   }
 
+  @Get('/list/search/:keyword')
+  async searchPost(
+    @Param('keyword') keyword: string,
+    @Query('step', ParseIntPipe) step: number,
+  ): Promise<PostEntity[]> {
+    return await this.postService.searchPost({ keyword, step });
+  }
+
   @Get('/count')
   async getCountOfPost(): Promise<GetCountResponse> {
     const count = await this.postService.getCountOfPost();
@@ -41,6 +49,15 @@ export class PostController {
   async getCountPageOfPost(): Promise<GetCountResponse> {
     const count = await this.postService.getCountPageOfPost();
     return { count };
+  }
+
+  @Get('/count/page/search/:keyword')
+  async getCountPageOfSearchPost(
+    @Param('keyword') keyword: string,
+  ): Promise<GetCountResponse> {
+    return {
+      count: await this.postService.getCountPageOfSearchPost(keyword),
+    };
   }
 
   @Get('/find/id/:id')

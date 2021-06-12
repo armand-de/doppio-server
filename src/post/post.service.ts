@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from '../types/status-response';
@@ -18,6 +18,8 @@ const POST_LIST_STEP_POINT = 15;
 const POST_LIST_OPTION = (step: number): FindManyOptions<Post> => ({
   skip: POST_LIST_STEP_POINT * (step - 1),
   take: POST_LIST_STEP_POINT * step,
+  select: POST_LIST_SELECT,
+  relations: ['user'],
 });
 
 @Injectable()
@@ -31,8 +33,19 @@ export class PostService {
   async getPostList(step: number): Promise<Post[]> {
     const postList = await this.postRepository.find({
       ...POST_LIST_OPTION(step),
-      select: POST_LIST_SELECT,
-      relations: ['user'],
+    });
+    const postListIncludePreference = await this.postPreferenceListPipeline(
+      postList,
+    );
+    return selectUserListPipeline(postListIncludePreference);
+  }
+
+  async searchPost({ keyword, step }): Promise<Post[]> {
+    const postList = await this.postRepository.find({
+      where: {
+        contents: Like(`%${keyword}%`),
+      },
+      ...POST_LIST_OPTION(step),
     });
     const postListIncludePreference = await this.postPreferenceListPipeline(
       postList,
@@ -46,6 +59,15 @@ export class PostService {
 
   async getCountPageOfPost(): Promise<number> {
     const count = await this.getCountOfPost();
+    return await this.getCountPagePipeline(count);
+  }
+
+  async getCountPageOfSearchPost(keyword: string): Promise<number> {
+    const count = await this.postRepository.count({
+      where: {
+        contents: Like(`%${keyword}%`),
+      },
+    });
     return await this.getCountPagePipeline(count);
   }
 

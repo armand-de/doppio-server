@@ -1,6 +1,7 @@
 import { User } from '../user/entity/user.entity';
 import { Recipe } from '../recipe/entity/recipe.entity';
 import { Post } from '../post/entity/post.entity';
+import { Comment } from '../comment/entity/comment.entity';
 
 export const USER_SELECT: (keyof User)[] = ['nickname', 'phone', 'image', 'id'];
 
@@ -39,6 +40,13 @@ export const POST_GET_SELECT: (keyof Post)[] = [
   'id',
   'title',
   'image',
+  'user',
+  'contents',
+  'createdDate',
+];
+
+export const COMMENT_SELECT: (keyof Comment)[] = [
+  'id',
   'user',
   'contents',
   'createdDate',
