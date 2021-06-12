@@ -26,6 +26,14 @@ export class RecipeService {
     private recipePreferenceRepository: Repository<RecipePreference>,
   ) {}
 
+  async getMyRecipeList(userId: string): Promise<Recipe[]> {
+    const recipeList = await this.recipeRepository.find({
+      where: { user: { id: userId } },
+      select: RECIPE_LIST_SELECT,
+    });
+    return await this.recipePreferenceListPipeline(recipeList);
+  }
+
   async getRecipeList(start: number): Promise<Recipe[]> {
     const recipeList = await this.recipeRepository.find({
       where: LIST_WHERE_OPTION(start),

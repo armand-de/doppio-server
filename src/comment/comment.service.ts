@@ -7,6 +7,7 @@ import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { COMMENT_SELECT } from '../utils/data-select';
 import { selectUserListPipeline } from '../utils/select-user-pipeline';
+import { LIST_WHERE_OPTION } from '../utils/list-where-option';
 
 const COMMENT_LIST_STEP_POINT = 30;
 
@@ -16,14 +17,14 @@ export class CommentService {
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
   ) {}
 
-  async getCommentList({ postId, userId, step }): Promise<Comment[]> {
+  async getCommentList({ postId, userId, start }): Promise<Comment[]> {
     const commentList = await this.commentRepository.find({
       where: {
         post: { id: postId },
+        ...LIST_WHERE_OPTION(start),
       },
       select: COMMENT_SELECT,
-      skip: COMMENT_LIST_STEP_POINT * (step - 1),
-      take: COMMENT_LIST_STEP_POINT * step,
+      take: COMMENT_LIST_STEP_POINT,
       relations: ['user'],
       order: {
         user: userId,

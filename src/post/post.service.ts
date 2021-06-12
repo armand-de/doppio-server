@@ -30,6 +30,13 @@ export class PostService {
     private postPreferenceRepository: Repository<PostPreference>,
   ) {}
 
+  async getMyPostList(userId: string): Promise<Post[]> {
+    return await this.postRepository.find({
+      where: { user: { id: userId } },
+      select: ['id', 'title', 'image', 'createdDate'],
+    });
+  }
+
   async getPostList(start: number): Promise<Post[]> {
     const postList = await this.postRepository.find({
       where: LIST_WHERE_OPTION(start),
@@ -59,23 +66,12 @@ export class PostService {
     return await this.postRepository.count();
   }
 
-  async getCountPageOfPost(): Promise<number> {
-    const count = await this.getCountOfPost();
-    return await this.getCountPagePipeline(count);
-  }
-
-  async getCountPageOfSearchPost(keyword: string): Promise<number> {
-    const count = await this.postRepository.count({
+  async getCountOfSearchPost(keyword: string): Promise<number> {
+    return await this.postRepository.count({
       where: {
         contents: Like(`%${keyword}%`),
       },
     });
-    return await this.getCountPagePipeline(count);
-  }
-
-  async getCountPagePipeline(count: number): Promise<number> {
-    const page = count / POST_LIST_STEP_POINT;
-    return page < 1 ? 1 : page;
   }
 
   async getPostById(id: number): Promise<Post> {

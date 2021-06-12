@@ -26,6 +26,13 @@ import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('/my')
+  async getMyRecipeList(@Req() req: any): Promise<Recipe[]> {
+    const { id } = req.user;
+    return await this.recipeService.getMyRecipeList(id);
+  }
+
   @Get('/list')
   async getRecipeList(@Query('start') start: number): Promise<Recipe[]> {
     return await this.recipeService.getRecipeList(start);

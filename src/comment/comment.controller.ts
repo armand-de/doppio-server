@@ -26,13 +26,13 @@ export class CommentController {
   async getCommentList(
     @Req() req: any,
     @Param('postId', ParseIntPipe) postId: number,
-    @Query('step', ParseIntPipe) step: number,
+    @Query('start', ParseIntPipe) start: number,
   ): Promise<Comment[]> {
     const { id: userId } = req.user;
     return await this.commentService.getCommentList({
       postId,
       userId,
-      step,
+      start,
     });
   }
 

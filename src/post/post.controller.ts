@@ -23,6 +23,13 @@ import { GetCountResponse } from '../utils/get-count-response.interface';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('/my')
+  async getMyPostList(@Req() req: any): Promise<PostEntity[]> {
+    const { id } = req.user;
+    return await this.postService.getMyPostList(id);
+  }
+
   @Get('/list')
   async getPostList(
     @Query('start', ParseIntPipe) start: number,
@@ -43,6 +50,20 @@ export class PostController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<PostResponse> {
     return await this.postService.getPostById(id);
+  }
+
+  @Get('/count/list')
+  async getCountOfPost(): Promise<GetCountResponse> {
+    const count = await this.postService.getCountOfPost();
+    return { count };
+  }
+
+  @Get('/count/list/search/:keyword')
+  async getSearchPost(
+    @Param('keyword') keyword: string,
+  ): Promise<GetCountResponse> {
+    const count = await this.postService.getCountOfSearchPost(keyword);
+    return { count };
   }
 
   @UseGuards(JwtAuthGuard)
