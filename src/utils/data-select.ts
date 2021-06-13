@@ -3,7 +3,8 @@ import { Recipe } from '../recipe/entity/recipe.entity';
 import { Post } from '../post/entity/post.entity';
 import { Comment } from '../comment/entity/comment.entity';
 
-export const USER_SELECT: (keyof User)[] = ['nickname', 'phone', 'image', 'id'];
+export const USER_GET_SELECT: (keyof User)[] = ['nickname', 'image', 'id'];
+export const USER_SELECT: (keyof User)[] = [...USER_GET_SELECT, 'phone'];
 
 export const RECIPE_LIST_SELECT: (keyof Recipe)[] = [
   'id',

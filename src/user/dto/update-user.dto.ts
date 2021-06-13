@@ -1,18 +1,7 @@
-import {
-  IsMobilePhone,
-  IsOptional,
-  IsString,
-  IsUrl,
-  IsUUID,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { OptionalUserIdDto } from './optional-user-id.dto';
 
-export class UpdateUserDto {
-  @IsString()
-  @IsUUID()
-  readonly id: string;
-
+export class UpdateUserDto extends OptionalUserIdDto {
   @IsOptional()
   @MinLength(3)
   @MaxLength(8)
@@ -20,20 +9,6 @@ export class UpdateUserDto {
   readonly nickname: string;
 
   @IsOptional()
-  @MinLength(7)
-  @MaxLength(30)
-  @IsString()
-  readonly password: string;
-
-  @IsOptional()
-  @MinLength(7)
-  @MaxLength(15)
-  @IsMobilePhone()
-  @IsString()
-  readonly phone: string;
-
-  @IsOptional()
   @MaxLength(200)
-  @IsUrl()
   readonly image: string;
 }

@@ -30,16 +30,25 @@ export class AuthService {
   async joinUser({ phone }: JoinUserDto): Promise<JoinResponse> {
     try {
       const verifyNumber = this.getVerifyNumber();
+      const userPhoneIsExist = await this.userService.getUserIsExistByPhone({
+        phone,
+      });
+
+      if (userPhoneIsExist) {
+        throw 'User phone is exist.';
+      }
+
       const object = { phone, verifyNumber };
-      const id = (await this.getVerifyUserIdByPhone(phone))?.id;
-      if (id) {
-        await this.updateVerifyNumberById({ id, verifyNumber });
+      const verifyUserId = await this.getVerifyUserIdByPhone(phone);
+
+      if (verifyUserId) {
+        await this.updateVerifyNumberById({ id: verifyUserId, verifyNumber });
       } else {
         await this.createVerifyUser(object);
       }
+
       await this.sendVerifyMessage(object);
     } catch (err) {
-      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return SUCCESS_RESPONSE;
@@ -56,7 +65,6 @@ export class AuthService {
         where: { phone, verifyNumber },
         select: ['id'],
       });
-      console.log(verify);
       if (!verify) {
         throw 'Invalid verification number.';
       }
@@ -95,11 +103,13 @@ export class AuthService {
     await this.verifyRepository.save({ id, verifyNumber });
   }
 
-  private async getVerifyUserIdByPhone(phone: string): Promise<Verify> {
-    return await this.verifyRepository.findOne({
-      where: { phone },
-      select: ['id'],
-    });
+  private async getVerifyUserIdByPhone(phone: string): Promise<string> {
+    return (
+      await this.verifyRepository.findOne({
+        where: { phone },
+        select: ['id'],
+      })
+    )?.id;
   }
 
   private async encryptPassword(password: string): Promise<string> {

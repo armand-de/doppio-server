@@ -29,8 +29,6 @@ export class User {
   @Column({
     length: 200,
     nullable: true,
-    default:
-      'https://cdn.pixabay.com/photo/2014/11/27/12/24/coffee-547490_960_720.png',
   })
   image: string;
 
