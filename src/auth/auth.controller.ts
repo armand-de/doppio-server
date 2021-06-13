@@ -35,7 +35,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  public async loginUser(@Req() req: any): Promise<LoginResponse> {
+  async loginUser(@Req() req: any): Promise<LoginResponse> {
     try {
       const { id, phone } = req.user;
       const accessToken = await this.authService.getJwtAccessToken({
@@ -49,7 +49,7 @@ export class AuthController {
   }
 
   @Post('/verify')
-  public async verifyUser(
+  async verifyUser(
     @Body() verifyUserDto: VerifyUserDto,
   ): Promise<StatusResponse> {
     return await this.authService.verifyUser(verifyUserDto);
@@ -57,7 +57,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
-  public async getProfile(@Req() req: any): Promise<GetProfileResponse> {
-    return req.user;
+  async getProfile(@Req() req: any): Promise<GetProfileResponse> {
+    const { nickname, image } = req.user;
+    return { nickname, image };
   }
 }

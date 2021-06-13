@@ -53,7 +53,7 @@ export class CommentController {
     const { id: userId } = req.user;
     return await this.commentService.createComment({
       ...createCommentRequestDto,
-      ...userId,
+      userId,
     });
   }
 

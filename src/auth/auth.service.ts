@@ -56,15 +56,17 @@ export class AuthService {
         where: { phone, verifyNumber },
         select: ['id'],
       });
-      if (verify) {
-        const password = await this.encryptPassword(plainPassword);
-        await this.userService.createUser({
-          phone,
-          nickname,
-          password,
-        });
-        await this.verifyRepository.delete(verify);
+      console.log(verify);
+      if (!verify) {
+        throw 'Invalid verification number.';
       }
+      const password = await this.encryptPassword(plainPassword);
+      await this.userService.createUser({
+        phone,
+        nickname,
+        password,
+      });
+      await this.verifyRepository.delete(verify);
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
