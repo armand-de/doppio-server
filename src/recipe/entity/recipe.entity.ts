@@ -43,13 +43,18 @@ export class Recipe {
   @Column('int', { nullable: false })
   time: number;
 
-  @ManyToOne((type) => User, (user: User) => user.recipes)
+  @ManyToOne((type) => User, (user: User) => user.recipes, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @OneToMany(
     (type) => RecipePreference,
     (recipe_preference: RecipePreference) => recipe_preference.recipe,
+    {
+      cascade: true,
+    },
   )
   recipe_preferences: RecipePreference[];
 

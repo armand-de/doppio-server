@@ -18,11 +18,15 @@ export class Comment {
   @Column({ length: 200, nullable: false })
   contents: string;
 
-  @ManyToOne((type) => User, (user: User) => user.comments)
+  @ManyToOne((type) => User, (user: User) => user.comments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne((type) => Post, (post: Post) => post.comments)
+  @ManyToOne((type) => Post, (post: Post) => post.comments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'postId' })
   post: Post;
 

@@ -14,11 +14,15 @@ export class RecipePreference {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne((type) => Recipe, (recipe: Recipe) => recipe.recipe_preferences)
+  @ManyToOne((type) => Recipe, (recipe: Recipe) => recipe.recipe_preferences, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'recipeId' })
   recipe: Recipe;
 
-  @ManyToOne((type) => User, (user: User) => user.recipe_preferences)
+  @ManyToOne((type) => User, (user: User) => user.recipe_preferences, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 

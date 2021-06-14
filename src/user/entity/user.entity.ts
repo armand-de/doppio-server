@@ -32,25 +32,37 @@ export class User {
   })
   image: string;
 
-  @OneToMany((type) => Recipe, (recipe: Recipe) => recipe.user)
+  @OneToMany((type) => Recipe, (recipe: Recipe) => recipe.user, {
+    cascade: true,
+  })
   recipes: Recipe[];
 
   @OneToMany(
     (type) => RecipePreference,
     (recipe_preference: RecipePreference) => recipe_preference.user,
+    {
+      cascade: true,
+    },
   )
   recipe_preferences: RecipePreference[];
 
-  @OneToMany((type) => Post, (post: Post) => post.user)
+  @OneToMany((type) => Post, (post: Post) => post.user, {
+    cascade: true,
+  })
   posts: Post[];
 
   @OneToMany(
     (type) => PostPreference,
     (post_preference: PostPreference) => post_preference.user,
+    {
+      cascade: true,
+    },
   )
   post_preference: PostPreference[];
 
-  @OneToMany((type) => Comment, (comment: Comment) => comment.user)
+  @OneToMany((type) => Comment, (comment: Comment) => comment.user, {
+    cascade: true,
+  })
   comments: Comment[];
 
   @CreateDateColumn({ name: 'created_at', nullable: false })

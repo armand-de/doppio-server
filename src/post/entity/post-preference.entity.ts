@@ -4,7 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { Post } from './post.entity';
@@ -14,11 +14,15 @@ export class PostPreference {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne((type) => User, (user: User) => user.post_preference)
+  @ManyToOne((type) => User, (user: User) => user.post_preference, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne((type) => Post, (post: Post) => post.post_preference)
+  @ManyToOne((type) => Post, (post: Post) => post.post_preference, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'postId' })
   post: Post;
 

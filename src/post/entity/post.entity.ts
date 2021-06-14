@@ -26,16 +26,23 @@ export class Post {
   @Column('text', { nullable: false })
   contents: string;
 
-  @OneToMany((type) => Comment, (comment: Comment) => comment.post)
+  @OneToMany((type) => Comment, (comment: Comment) => comment.post, {
+    cascade: true,
+  })
   comments: Comment[];
 
   @OneToMany(
     (type) => PostPreference,
     (post_preference: PostPreference) => post_preference.post,
+    {
+      cascade: true,
+    },
   )
   post_preference: PostPreference[];
 
-  @ManyToOne((type) => User, (user: User) => user.posts)
+  @ManyToOne((type) => User, (user: User) => user.posts, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
