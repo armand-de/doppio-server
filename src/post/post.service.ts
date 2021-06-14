@@ -81,6 +81,7 @@ export class PostService {
       relations: ['user'],
     });
     const postIncludePreference = await this.postPreferencePipeline(post);
+    console.log(postIncludePreference);
     return selectUserPipeline(postIncludePreference);
   }
 
