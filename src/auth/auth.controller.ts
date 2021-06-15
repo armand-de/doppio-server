@@ -57,8 +57,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
-  async getProfile(@Req() req: any): Promise<GetProfileResponse> {
-    const { nickname, image } = req.user;
-    return { nickname, image };
+  getProfile(@Req() req: any): Promise<GetProfileResponse> {
+    console.log(req.user);
+    return req.user;
   }
 }

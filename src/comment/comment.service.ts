@@ -57,11 +57,11 @@ export class CommentService {
     return SUCCESS_RESPONSE;
   }
 
-  async deleteComment({ userId, postId }): Promise<StatusResponse> {
+  async deleteComment({ userId, id }): Promise<StatusResponse> {
     try {
       await this.commentRepository.delete({
+        id,
         user: { id: userId },
-        post: { id: postId },
       });
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);

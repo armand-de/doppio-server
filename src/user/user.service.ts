@@ -34,8 +34,10 @@ export class UserService {
     ...updateUserDto
   }: UpdateUserDto): Promise<StatusResponse> {
     try {
-      await this.userRepository.save({ id: userId, ...updateUserDto });
+      const user = await this.userRepository.findOne(userId);
+      await this.userRepository.save({ ...user, ...updateUserDto });
     } catch (err) {
+      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return SUCCESS_RESPONSE;
