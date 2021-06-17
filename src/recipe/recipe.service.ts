@@ -96,7 +96,7 @@ export class RecipeService {
     return await this.recipeRepository.find({
       where: {
         ...(keyword ? { name: Like(`%${keyword}%`) } : {}),
-        ...(category ? { category: parseInt(category) } : {}),
+        ...(category ? { category } : {}),
         ...LIST_WHERE_OPTION(start),
       },
       ...RECIPE_LIST_OPTION,

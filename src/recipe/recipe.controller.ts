@@ -42,7 +42,7 @@ export class RecipeController {
   async searchRecipe(
     @Query('start', ParseIntPipe) start?: number,
     @Query('keyword') keyword?: string,
-    @Query('category') category?: string,
+    @Query('category') category?: number,
   ): Promise<Recipe[]> {
     if (keyword || category) {
       return await this.recipeService.searchRecipe({
