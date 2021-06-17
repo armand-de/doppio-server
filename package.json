@@ -1,8 +1,8 @@
 {
-  "name": "server",
+  "name": "doppio_server",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Essential app for home cafe. Start a home cafe quickly with Doppio.",
+  "author": "Armand De",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

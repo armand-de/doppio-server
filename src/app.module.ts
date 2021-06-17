@@ -39,9 +39,7 @@ import { CommentModule } from './comment/comment.module';
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: MorganInterceptor(
-        process.env.NODE_ENV === 'production' ? 'production' : 'dev',
-      ),
+      useClass: MorganInterceptor('dev'),
     },
   ],
 })
