@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from '../types/status-response';
@@ -16,10 +16,13 @@ import { RequestPostPreferenceDto } from './dto/requestPostPreference.dto';
 import { LIST_WHERE_OPTION } from '../utils/list-where-option';
 
 const POST_LIST_STEP_POINT = 15;
-const POST_LIST_OPTION = {
+const POST_LIST_OPTION: FindManyOptions<Post> = {
   take: POST_LIST_STEP_POINT,
   select: POST_LIST_SELECT,
   relations: ['user'],
+  order: {
+    id: 'DESC',
+  },
 };
 
 @Injectable()
@@ -34,6 +37,9 @@ export class PostService {
     return await this.postRepository.find({
       where: { user: { id: userId } },
       select: ['id', 'title', 'image', 'createdDate'],
+      order: {
+        id: 'DESC',
+      },
     });
   }
 

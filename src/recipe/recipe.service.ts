@@ -16,6 +16,9 @@ const RECIPE_LIST_STEP_POINT = 15;
 const RECIPE_LIST_OPTION: FindManyOptions<Recipe> = {
   take: RECIPE_LIST_STEP_POINT,
   select: RECIPE_LIST_SELECT,
+  order: {
+    id: 'DESC',
+  },
 };
 
 @Injectable()
@@ -30,6 +33,9 @@ export class RecipeService {
     const recipeList = await this.recipeRepository.find({
       where: { user: { id: userId } },
       select: RECIPE_LIST_SELECT,
+      order: {
+        id: 'DESC',
+      },
     });
     return await this.recipePreferenceListPipeline(recipeList);
   }
@@ -37,6 +43,9 @@ export class RecipeService {
   async getRecipeList(start: number): Promise<Recipe[]> {
     const recipeList = await this.recipeRepository.find({
       where: LIST_WHERE_OPTION(start),
+      order: {
+        id: 'DESC',
+      },
       ...RECIPE_LIST_OPTION,
     });
     return await this.recipePreferenceListPipeline(recipeList);

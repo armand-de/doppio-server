@@ -27,6 +27,7 @@ export class CommentService {
       take: COMMENT_LIST_STEP_POINT,
       relations: ['user'],
       order: {
+        id: 'DESC',
         user: userId,
       },
     });
