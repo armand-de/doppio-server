@@ -8,7 +8,7 @@ import { GetJwtAccessTokenDto } from '../dto/get-jwt-access-token.dto';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly userService: UserService,
   ) {
     super({
