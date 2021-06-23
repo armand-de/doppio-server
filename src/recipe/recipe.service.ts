@@ -6,7 +6,6 @@ import { StatusResponse } from '../types/status-response';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { RECIPE_GET_SELECT, RECIPE_LIST_SELECT } from '../utils/data-select';
-import { selectUserPipeline } from '../utils/select-user-pipeline';
 import { RecipePreference } from './entity/recipe-preference.entity';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
 import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
@@ -40,9 +39,13 @@ export class RecipeService {
     return await this.recipePreferenceListPipeline(recipeList);
   }
 
-  async getRecipeList(start: number): Promise<Recipe[]> {
+  async getRecipeList({ start, keyword, category }): Promise<Recipe[]> {
     const recipeList = await this.recipeRepository.find({
-      where: LIST_WHERE_OPTION(start),
+      where: {
+        ...(keyword ? { name: Like(`%${keyword}%`) } : {}),
+        ...(category ? { category } : {}),
+        ...LIST_WHERE_OPTION(start),
+      },
       order: {
         id: 'DESC',
       },
@@ -51,56 +54,23 @@ export class RecipeService {
     return await this.recipePreferenceListPipeline(recipeList);
   }
 
-  async getRecipeById(id: number): Promise<RecipeIncludePreference> {
-    const recipe = await this.recipeRepository.findOne({
-      where: { id },
-      select: RECIPE_GET_SELECT,
-    });
-    return await this.recipePreferencePipeline(recipe);
-  }
-
   async getPreferenceCountByRecipeId(id: number): Promise<number> {
     return await this.recipePreferenceRepository.count({
       where: { recipe: { id } },
     });
   }
 
-  async getCountPagePipeline(count: number): Promise<number> {
-    const page = count / RECIPE_LIST_STEP_POINT;
-    return page < 1 ? 1 : page;
-  }
-
   async getCountOfRecipe(): Promise<number> {
     return await this.recipeRepository.count();
   }
 
-  async getRecipeIncludeUserById(id: number): Promise<RecipeIncludePreference> {
+  async getRecipeById(id: number): Promise<RecipeIncludePreference> {
     const recipe = await this.recipeRepository.findOne({
       where: { id },
       select: ['user', ...RECIPE_GET_SELECT],
       relations: ['user'],
     });
-    return selectUserPipeline(await this.recipePreferencePipeline(recipe));
-  }
-
-  async getCountPageOfSearchRecipe(keyword): Promise<number> {
-    const amount = await this.recipeRepository.count({
-      where: {
-        name: Like(`%${keyword}%`),
-      },
-    });
-    return await this.getCountPagePipeline(amount);
-  }
-
-  async searchRecipe({ keyword, category, start }): Promise<Recipe[]> {
-    return await this.recipeRepository.find({
-      where: {
-        ...(keyword ? { name: Like(`%${keyword}%`) } : {}),
-        ...(category ? { category } : {}),
-        ...LIST_WHERE_OPTION(start),
-      },
-      ...RECIPE_LIST_OPTION,
-    });
+    return await this.recipePreferencePipeline(recipe);
   }
 
   private async recipePreferencePipeline(

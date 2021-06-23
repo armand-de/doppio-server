@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -27,65 +25,36 @@ export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('/my')
+  @Get('my')
   async getMyRecipeList(@Req() req: any): Promise<Recipe[]> {
     const { id } = req.user;
     return await this.recipeService.getMyRecipeList(id);
   }
 
-  @Get('/list')
-  async getRecipeList(@Query('start') start: number): Promise<Recipe[]> {
-    return await this.recipeService.getRecipeList(start);
-  }
-
-  @Get('/list/search')
-  async searchRecipe(
-    @Query('start', ParseIntPipe) start?: number,
+  @Get()
+  async getRecipeList(
+    @Query('start', ParseIntPipe) start: number,
     @Query('keyword') keyword?: string,
     @Query('category') category?: number,
   ): Promise<Recipe[]> {
-    if (keyword || category) {
-      return await this.recipeService.searchRecipe({
-        keyword,
-        category,
-        start,
-      });
-    }
-    throw new HttpException('Bad request.', HttpStatus.BAD_REQUEST);
+    return await this.recipeService.getRecipeList({ start, keyword, category });
   }
 
-  @Get('/count')
+  @Get('count')
   async getCountOfRecipe(): Promise<GetCountResponse> {
-    return {
-      count: await this.recipeService.getCountOfRecipe(),
-    };
+    const count = await this.recipeService.getCountOfRecipe();
+    return { count };
   }
 
-  @Get('/count/page/search/:keyword')
-  async getCountPageOfSearchRecipe(
-    @Param('keyword') keyword: string,
-  ): Promise<GetCountResponse> {
-    return {
-      count: await this.recipeService.getCountPageOfSearchRecipe(keyword),
-    };
-  }
-
-  @Get('/find/id/:id')
+  @Get(':id')
   async getRecipeById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<RecipeIncludePreference> {
     return await this.recipeService.getRecipeById(id);
   }
 
-  @Get('/find/id/:id/user')
-  async getRecipeIncludeUserById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<RecipeIncludePreference> {
-    return await this.recipeService.getRecipeIncludeUserById(id);
-  }
-
   @UseGuards(JwtAuthGuard)
-  @Post('/create')
+  @Post()
   async createRecipe(
     @Req() req: any,
     @Body() createRecipeDto: CreateRecipeDto,
@@ -98,7 +67,7 @@ export class RecipeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('/delete/:id')
+  @Delete(':id')
   async deleteRecipe(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<StatusResponse> {
@@ -106,10 +75,10 @@ export class RecipeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/is-exist/preference/my')
+  @Get('preference/:id')
   async getMyRecipePreferenceIsExist(
     @Req() req: any,
-    @Body() { recipeId }: RequestRecipePreferenceDto,
+    @Param('id', ParseIntPipe) recipeId: number,
   ): Promise<GetIsExistResponse> {
     const { id: userId } = req.user;
     return {
@@ -121,7 +90,7 @@ export class RecipeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/create/preference')
+  @Post('preference')
   async createRecipePreference(
     @Req() req: any,
     @Body() { recipeId }: RequestRecipePreferenceDto,
@@ -134,10 +103,10 @@ export class RecipeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/delete/preference')
+  @Delete('preference/:id')
   async deleteRecipePreference(
     @Req() req: any,
-    @Body() { recipeId }: RequestRecipePreferenceDto,
+    @Param('id', ParseIntPipe) recipeId: number,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.deleteRecipePreference({

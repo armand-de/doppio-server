@@ -20,10 +20,10 @@ export class User {
   @Column({ length: 8, unique: true, nullable: false })
   nickname: string;
 
-  @Column({ length: 150, nullable: false })
+  @Column({ length: 150, nullable: false, select: false })
   password: string;
 
-  @Column({ length: 15, nullable: false, unique: true })
+  @Column({ length: 15, nullable: false, unique: true, select: false })
   phone: string;
 
   @Column({
@@ -65,9 +65,9 @@ export class User {
   })
   comments: Comment[];
 
-  @CreateDateColumn({ name: 'created_at', nullable: false })
+  @CreateDateColumn({ name: 'created_at', nullable: false, select: false })
   createdDate: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', nullable: false })
+  @UpdateDateColumn({ name: 'updated_at', nullable: false, select: false })
   updatedDate: Date;
 }

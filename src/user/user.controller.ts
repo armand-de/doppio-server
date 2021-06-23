@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -21,15 +21,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('/all')
+  @Get()
   async getAllUsers(): Promise<User[]> {
     return await this.userService.getAllUsers();
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/get/:id')
-  async getUserById(@Param() params): Promise<User> {
-    return await this.userService.getUserById(params.id);
+  @Get('my')
+  async getMyUser(@Req() req: any): Promise<User> {
+    return req.user;
+  }
+
+  @Get(':id')
+  async getUserById(@Param('id') userId: string): Promise<User> {
+    return await this.userService.getUserById(userId);
   }
 
   @Get('/exist/phone/:phone')
@@ -51,7 +56,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/update')
+  @Put()
   async update(
     @Req() req: any,
     @Body() updateUserDto: UpdateUserDto,
@@ -61,7 +66,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('/delete')
+  @Delete()
   async delete(@Req() req: any): Promise<StatusResponse> {
     const { id } = req.user;
     return await this.userService.deleteUser(id);

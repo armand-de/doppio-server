@@ -22,10 +22,10 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('/list/:postId')
+  @Get(':id')
   async getCommentList(
     @Req() req: any,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id', ParseIntPipe) postId: number,
     @Query('start', ParseIntPipe) start: number,
   ): Promise<Comment[]> {
     const { id: userId } = req.user;
@@ -36,16 +36,16 @@ export class CommentController {
     });
   }
 
-  @Get('/count/list/:postId')
+  @Get('count/:id')
   async getCountOfComment(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id', ParseIntPipe) postId: number,
   ): Promise<GetCountResponse> {
     const count = await this.commentService.getCountOfComment(postId);
     return { count };
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/create')
+  @Post()
   async createComment(
     @Req() req: any,
     @Body() createCommentRequestDto: CreateCommentRequestDto,
@@ -58,7 +58,7 @@ export class CommentController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('/delete/:id')
+  @Delete(':id')
   async deleteComment(
     @Req() req: any,
     @Param('id', ParseIntPipe) id: number,

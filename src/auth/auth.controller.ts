@@ -11,7 +11,6 @@ import {
 import { AuthService } from './auth.service';
 import { JoinUserDto } from './dto/join-user.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { GetProfileResponse } from './interface/get-profile-response.interface';
 import { StatusResponse } from '../types/status-response';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
@@ -23,7 +22,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('/')
+  @Get()
   async authorization(): Promise<StatusResponse> {
     return SUCCESS_RESPONSE;
   }
@@ -53,12 +52,5 @@ export class AuthController {
     @Body() verifyUserDto: VerifyUserDto,
   ): Promise<StatusResponse> {
     return await this.authService.verifyUser(verifyUserDto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('/profile')
-  getProfile(@Req() req: any): Promise<GetProfileResponse> {
-    console.log(req.user);
-    return req.user;
   }
 }

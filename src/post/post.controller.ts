@@ -24,7 +24,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('/my')
+  @Get('my')
   async getMyPostList(@Req() req: any): Promise<PostEntity[]> {
     const { id } = req.user;
     return await this.postService.getMyPostList(id);
@@ -45,7 +45,7 @@ export class PostController {
     return await this.postService.getPostById(id);
   }
 
-  @Get('/count')
+  @Get('count')
   async getCountOfPost(
     @Query('keyword') keyword?: string,
   ): Promise<GetCountResponse> {
@@ -77,7 +77,7 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/preference/:id')
+  @Get('preference/:id')
   async getMyPostPreferenceIsExist(
     @Req() req: any,
     @Param('id', ParseIntPipe) postId: number,
@@ -92,7 +92,7 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/preference')
+  @Post('preference')
   async createPostPreference(
     @Req() req: any,
     @Body('postId', ParseIntPipe) postId: number,
@@ -105,7 +105,7 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('/preference/:id')
+  @Delete('preference/:id')
   async deletePostPreference(
     @Req() req: any,
     @Param('id', ParseIntPipe) postId: number,

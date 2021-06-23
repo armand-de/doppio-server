@@ -6,10 +6,6 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { StatusResponse } from '../types/status-response';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { POST_GET_SELECT, POST_LIST_SELECT } from '../utils/data-select';
-import {
-  selectUserListPipeline,
-  selectUserPipeline,
-} from '../utils/select-user-pipeline';
 import { PostPreference } from './entity/post-preference.entity';
 import { PostIncludePreference } from './interface/post-include-preference.interface';
 import { RequestPostPreferenceDto } from './dto/requestPostPreference.dto';
@@ -57,10 +53,7 @@ export class PostService {
       ],
       ...POST_LIST_OPTION,
     });
-    const postListIncludePreference = await this.postPreferenceListPipeline(
-      postList,
-    );
-    return selectUserListPipeline(postListIncludePreference);
+    return await this.postPreferenceListPipeline(postList);
   }
 
   async getCountOfPost(keyword?: string): Promise<number> {
@@ -82,8 +75,7 @@ export class PostService {
       select: POST_GET_SELECT,
       relations: ['user'],
     });
-    const postIncludePreference = await this.postPreferencePipeline(post);
-    return selectUserPipeline(postIncludePreference);
+    return await this.postPreferencePipeline(post);
   }
 
   async getPostPreferenceCountByPostId(id: number): Promise<number> {
