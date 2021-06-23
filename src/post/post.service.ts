@@ -43,9 +43,18 @@ export class PostService {
     });
   }
 
-  async getPostList(start: number): Promise<Post[]> {
+  async getPostList({ start, keyword }): Promise<Post[]> {
     const postList = await this.postRepository.find({
-      where: LIST_WHERE_OPTION(start),
+      where: [
+        {
+          ...(keyword ? { contents: Like(`%${keyword}%`) } : {}),
+          ...LIST_WHERE_OPTION(start),
+        },
+        {
+          ...(keyword ? { title: Like(`%${keyword}%`) } : {}),
+          ...LIST_WHERE_OPTION(start),
+        },
+      ],
       ...POST_LIST_OPTION,
     });
     const postListIncludePreference = await this.postPreferenceListPipeline(
@@ -54,30 +63,17 @@ export class PostService {
     return selectUserListPipeline(postListIncludePreference);
   }
 
-  async searchPost({ keyword, start }): Promise<Post[]> {
-    const postList = await this.postRepository.find({
-      where: {
-        contents: Like(`%${keyword}%`),
-        ...LIST_WHERE_OPTION(start),
-      },
-      ...POST_LIST_OPTION,
-    });
-    const postListIncludePreference = await this.postPreferenceListPipeline(
-      postList,
+  async getCountOfPost(keyword?: string): Promise<number> {
+    return await this.postRepository.count(
+      keyword
+        ? {
+            where: [
+              { title: Like(`%${keyword}%`) },
+              { contents: Like(`%${keyword}%`) },
+            ],
+          }
+        : {},
     );
-    return selectUserListPipeline(postListIncludePreference);
-  }
-
-  async getCountOfPost(): Promise<number> {
-    return await this.postRepository.count();
-  }
-
-  async getCountOfSearchPost(keyword: string): Promise<number> {
-    return await this.postRepository.count({
-      where: {
-        contents: Like(`%${keyword}%`),
-      },
-    });
   }
 
   async getPostById(id: number): Promise<Post> {
@@ -130,9 +126,12 @@ export class PostService {
     return SUCCESS_RESPONSE;
   }
 
-  async deletePost(id: number): Promise<StatusResponse> {
+  async deletePost({ userId, postId }): Promise<StatusResponse> {
     try {
-      await this.postRepository.delete({ id });
+      await this.postRepository.delete({
+        id: postId,
+        user: { id: userId },
+      });
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }

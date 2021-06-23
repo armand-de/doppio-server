@@ -30,44 +30,31 @@ export class PostController {
     return await this.postService.getMyPostList(id);
   }
 
-  @Get('/list')
+  @Get()
   async getPostList(
     @Query('start', ParseIntPipe) start: number,
+    @Query('keyword') keyword?: string,
   ): Promise<PostEntity[]> {
-    return await this.postService.getPostList(start);
+    return await this.postService.getPostList({ start, keyword });
   }
 
-  @Get('/list/search/:keyword')
-  async searchPost(
-    @Param('keyword') keyword: string,
-    @Query('start', ParseIntPipe) start: number,
-  ): Promise<PostEntity[]> {
-    return await this.postService.searchPost({ keyword, start });
-  }
-
-  @Get('/find/id/:id')
+  @Get(':id')
   async getPostById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<PostResponse> {
     return await this.postService.getPostById(id);
   }
 
-  @Get('/count/list')
-  async getCountOfPost(): Promise<GetCountResponse> {
-    const count = await this.postService.getCountOfPost();
-    return { count };
-  }
-
-  @Get('/count/list/search/:keyword')
-  async getSearchPost(
-    @Param('keyword') keyword: string,
+  @Get('/count')
+  async getCountOfPost(
+    @Query('keyword') keyword?: string,
   ): Promise<GetCountResponse> {
-    const count = await this.postService.getCountOfSearchPost(keyword);
+    const count = await this.postService.getCountOfPost(keyword);
     return { count };
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/create')
+  @Post()
   async createPost(
     @Req() req: any,
     @Body() createPostDto: CreatePostDto,
@@ -80,19 +67,20 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('/delete/:id')
+  @Delete(':id')
   async deletePost(
     @Req() req: any,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) postId: number,
   ): Promise<StatusResponse> {
-    return await this.postService.deletePost(id);
+    const { id: userId } = req.user;
+    return await this.postService.deletePost({ userId, postId });
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/is-exist/preference/:postId')
+  @Get('/preference/:id')
   async getMyPostPreferenceIsExist(
     @Req() req: any,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id', ParseIntPipe) postId: number,
   ): Promise<GetIsExistResponse> {
     const { id: userId } = req.user;
     return {
@@ -104,7 +92,7 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/create/preference')
+  @Post('/preference')
   async createPostPreference(
     @Req() req: any,
     @Body('postId', ParseIntPipe) postId: number,
@@ -117,10 +105,10 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/delete/preference')
+  @Delete('/preference/:id')
   async deletePostPreference(
     @Req() req: any,
-    @Body('postId') postId: number,
+    @Param('id', ParseIntPipe) postId: number,
   ): Promise<StatusResponse> {
     const { id: userId } = req.user;
     return await this.postService.deletePostPreference({
