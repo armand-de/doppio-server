@@ -41,16 +41,18 @@ export class PostService {
 
   async getPostList({ start, keyword }): Promise<Post[]> {
     const postList = await this.postRepository.find({
-      where: [
-        {
-          ...(keyword ? { contents: Like(`%${keyword}%`) } : {}),
-          ...LIST_WHERE_OPTION(start),
-        },
-        {
-          ...(keyword ? { title: Like(`%${keyword}%`) } : {}),
-          ...LIST_WHERE_OPTION(start),
-        },
-      ],
+      where: keyword
+        ? [
+            {
+              ...(keyword ? { contents: Like(`%${keyword}%`) } : {}),
+              ...LIST_WHERE_OPTION(start),
+            },
+            {
+              ...(keyword ? { title: Like(`%${keyword}%`) } : {}),
+              ...LIST_WHERE_OPTION(start),
+            },
+          ]
+        : LIST_WHERE_OPTION(start),
       ...POST_LIST_OPTION,
     });
     return await this.postPreferenceListPipeline(postList);

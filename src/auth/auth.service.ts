@@ -27,6 +27,13 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  client = new twilio(
+    this.configService.get<string>('TWILIO_ACCOUNT_SID'),
+    this.configService.get<string>('TWILIO_AUTH_TOKEN'),
+  );
+
   async joinUser({ phone }: JoinUserDto): Promise<JoinResponse> {
     try {
       const verifyNumber = this.getVerifyNumber();
@@ -144,14 +151,7 @@ export class AuthService {
     phone: string;
     verifyNumber: string;
   }): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const client = await new twilio(
-      this.configService.get<string>('TWILIO_ACCOUNT_SID'),
-      this.configService.get<string>('TWILIO_AUTH_TOKEN'),
-    );
-
-    await client.messages.create({
+    await this.client.messages.create({
       body: `인증번호: ${verifyNumber}`,
       to: `+82${phone.substring(1, phone.length)}`,
       from: this.configService.get<string>('TWILIO_NUMBER'),
