@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Recipe } from './entity/recipe.entity';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse } from '../types/response';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { RECIPE_GET_SELECT, RECIPE_LIST_SELECT } from '../utils/data-select';
@@ -96,7 +96,7 @@ export class RecipeService {
   async createRecipe({
     userId,
     ...createRecipeDto
-  }: CreateRecipeDto): Promise<StatusResponse> {
+  }: CreateRecipeDto): Promise<IStatusResponse> {
     try {
       const newRecipe = await this.recipeRepository.create({
         user: { id: userId },
@@ -110,7 +110,7 @@ export class RecipeService {
     return SUCCESS_RESPONSE;
   }
 
-  async deleteRecipe(id: number): Promise<StatusResponse> {
+  async deleteRecipe(id: number): Promise<IStatusResponse> {
     try {
       await this.recipeRepository.delete({ id });
     } catch (err) {
@@ -136,7 +136,7 @@ export class RecipeService {
 
   async createRecipePreference(
     createRecipePreferenceDto: RequestRecipePreferenceDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     try {
       const recipePreferenceIsExist =
         !!(await this.getPreferenceByRecipeIdAndUserId(
@@ -159,7 +159,7 @@ export class RecipeService {
 
   async deleteRecipePreference(
     deleteRecipePreferenceDto: RequestRecipePreferenceDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     try {
       const id = (
         await this.getPreferenceByRecipeIdAndUserId(deleteRecipePreferenceDto)

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse } from '../types/response';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { POST_GET_SELECT, POST_LIST_SELECT } from '../utils/data-select';
 import { PostPreference } from './entity/post-preference.entity';
@@ -107,7 +107,7 @@ export class PostService {
   async createPost({
     userId,
     ...createPostDto
-  }: CreatePostDto): Promise<StatusResponse> {
+  }: CreatePostDto): Promise<IStatusResponse> {
     try {
       const newPost = await this.postRepository.create({
         user: { id: userId },
@@ -120,7 +120,7 @@ export class PostService {
     return SUCCESS_RESPONSE;
   }
 
-  async deletePost({ userId, postId }): Promise<StatusResponse> {
+  async deletePost({ userId, postId }): Promise<IStatusResponse> {
     try {
       await this.postRepository.delete({
         id: postId,
@@ -149,7 +149,7 @@ export class PostService {
 
   async createPostPreference(
     createPostPreferenceDto: RequestPostPreferenceDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     try {
       const postPreferenceIsExist =
         !!(await this.getPostPreferenceByUserIdAndPostId(
@@ -171,7 +171,7 @@ export class PostService {
 
   async deletePostPreference(
     deletePostPreferenceDto: RequestPostPreferenceDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     try {
       const id = (
         await this.getPostPreferenceByUserIdAndPostId(deletePostPreferenceDto)

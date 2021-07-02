@@ -11,13 +11,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { StatusResponse } from '../types/status-response';
+import {
+  IStatusResponse,
+  IExistResponse,
+  ICountResponse,
+} from '../types/response';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { Post as PostEntity } from './entity/post.entity';
 import { PostResponse } from './interface/post-response.interface';
 import { CreatePostDto } from './dto/create-post.dto';
-import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
-import { GetCountResponse } from '../utils/get-count-response.interface';
 
 @Controller('post')
 export class PostController {
@@ -48,7 +50,7 @@ export class PostController {
   @Get('count')
   async getCountOfPost(
     @Query('keyword') keyword?: string,
-  ): Promise<GetCountResponse> {
+  ): Promise<ICountResponse> {
     const count = await this.postService.getCountOfPost(keyword);
     return { count };
   }
@@ -58,7 +60,7 @@ export class PostController {
   async createPost(
     @Req() req: any,
     @Body() createPostDto: CreatePostDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.postService.createPost({
       userId,
@@ -71,7 +73,7 @@ export class PostController {
   async deletePost(
     @Req() req: any,
     @Param('id', ParseIntPipe) postId: number,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.postService.deletePost({ userId, postId });
   }
@@ -81,10 +83,10 @@ export class PostController {
   async getMyPostPreferenceIsExist(
     @Req() req: any,
     @Param('id', ParseIntPipe) postId: number,
-  ): Promise<GetIsExistResponse> {
+  ): Promise<IExistResponse> {
     const { id: userId } = req.user;
     return {
-      isExist: !!(await this.postService.getPostPreferenceByUserIdAndPostId({
+      exist: !!(await this.postService.getPostPreferenceByUserIdAndPostId({
         postId,
         userId,
       })),
@@ -96,7 +98,7 @@ export class PostController {
   async createPostPreference(
     @Req() req: any,
     @Body('postId', ParseIntPipe) postId: number,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.postService.createPostPreference({
       postId,
@@ -109,7 +111,7 @@ export class PostController {
   async deletePostPreference(
     @Req() req: any,
     @Param('id', ParseIntPipe) postId: number,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.postService.deletePostPreference({
       postId,

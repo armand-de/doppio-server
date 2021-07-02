@@ -11,10 +11,10 @@ import {
 import { AuthService } from './auth.service';
 import { JoinUserDto } from './dto/join-user.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse } from '../types/response';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { LoginResponse } from './interface/login-response.interface';
+import { ILoginResponse } from './interface/login-response.interface';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 
 @Controller('auth')
@@ -23,18 +23,18 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async authorization(): Promise<StatusResponse> {
+  async authorization(): Promise<IStatusResponse> {
     return SUCCESS_RESPONSE;
   }
 
   @Post('/join')
-  async joinUser(@Body() joinUserDto: JoinUserDto): Promise<StatusResponse> {
+  async joinUser(@Body() joinUserDto: JoinUserDto): Promise<IStatusResponse> {
     return await this.authService.joinUser(joinUserDto);
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async loginUser(@Req() req: any): Promise<LoginResponse> {
+  async loginUser(@Req() req: any): Promise<ILoginResponse> {
     try {
       const { id, phone } = req.user;
       const accessToken = await this.authService.getJwtAccessToken({
@@ -50,7 +50,7 @@ export class AuthController {
   @Post('/verify')
   async verifyUser(
     @Body() verifyUserDto: VerifyUserDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     return await this.authService.verifyUser(verifyUserDto);
   }
 }

@@ -13,9 +13,8 @@ import {
 import { CommentService } from './comment.service';
 import { Comment } from './entity/comment.entity';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse, ICountResponse } from '../types/response';
 import { CreateCommentRequestDto } from './dto/create-comment-request.dto';
-import { GetCountResponse } from '../utils/get-count-response.interface';
 
 @Controller('comment')
 export class CommentController {
@@ -39,7 +38,7 @@ export class CommentController {
   @Get('count/:id')
   async getCountOfComment(
     @Param('id', ParseIntPipe) postId: number,
-  ): Promise<GetCountResponse> {
+  ): Promise<ICountResponse> {
     const count = await this.commentService.getCountOfComment(postId);
     return { count };
   }
@@ -49,7 +48,7 @@ export class CommentController {
   async createComment(
     @Req() req: any,
     @Body() createCommentRequestDto: CreateCommentRequestDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.commentService.createComment({
       ...createCommentRequestDto,
@@ -62,7 +61,7 @@ export class CommentController {
   async deleteComment(
     @Req() req: any,
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.commentService.deleteComment({ userId, id });
   }

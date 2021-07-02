@@ -11,7 +11,7 @@ import { JoinResponse } from './interface/join-response.interface';
 import { Verify } from './entity/verify.entity';
 import { JoinUserDto } from './dto/join-user.dto';
 import { CreateVerifyUserDto } from './dto/create-verify-user.dto';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse } from '../types/response';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { UserService } from '../user/user.service';
 import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
@@ -37,9 +37,7 @@ export class AuthService {
   async joinUser({ phone }: JoinUserDto): Promise<JoinResponse> {
     try {
       const verifyNumber = this.getVerifyNumber();
-      const userPhoneIsExist = await this.userService.getUserIsExistByPhone({
-        phone,
-      });
+      const userPhoneIsExist = !!(await this.userService.getUserByPhone(phone));
 
       if (userPhoneIsExist) {
         throw 'User phone is exist.';
@@ -66,7 +64,7 @@ export class AuthService {
     password: plainPassword,
     phone,
     verifyNumber,
-  }: VerifyUserDto): Promise<StatusResponse> {
+  }: VerifyUserDto): Promise<IStatusResponse> {
     try {
       const verify = await this.verifyRepository.findOne({
         where: { phone, verifyNumber },

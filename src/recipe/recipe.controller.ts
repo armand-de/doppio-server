@@ -12,13 +12,12 @@ import {
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse } from '../types/response';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { Recipe } from './entity/recipe.entity';
 import { RecipeIncludePreference } from './interface/recipe-include-preference.interface';
-import { GetCountResponse } from '../utils/get-count-response.interface';
 import { RequestRecipePreferenceDto } from './dto/request-recipe-preference.dto';
-import { GetIsExistResponse } from '../utils/get-is-exist-response.interface';
+import { IExistResponse, ICountResponse } from '../types/response';
 
 @Controller('recipe')
 export class RecipeController {
@@ -41,7 +40,7 @@ export class RecipeController {
   }
 
   @Get('count')
-  async getCountOfRecipe(): Promise<GetCountResponse> {
+  async getCountOfRecipe(): Promise<ICountResponse> {
     const count = await this.recipeService.getCountOfRecipe();
     return { count };
   }
@@ -58,7 +57,7 @@ export class RecipeController {
   async createRecipe(
     @Req() req: any,
     @Body() createRecipeDto: CreateRecipeDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.createRecipe({
       userId,
@@ -70,7 +69,7 @@ export class RecipeController {
   @Delete(':id')
   async deleteRecipe(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     return await this.recipeService.deleteRecipe(id);
   }
 
@@ -79,10 +78,10 @@ export class RecipeController {
   async getMyRecipePreferenceIsExist(
     @Req() req: any,
     @Param('id', ParseIntPipe) recipeId: number,
-  ): Promise<GetIsExistResponse> {
+  ): Promise<IExistResponse> {
     const { id: userId } = req.user;
     return {
-      isExist: !!(await this.recipeService.getPreferenceByRecipeIdAndUserId({
+      exist: !!(await this.recipeService.getPreferenceByRecipeIdAndUserId({
         recipeId,
         userId,
       })),
@@ -94,7 +93,7 @@ export class RecipeController {
   async createRecipePreference(
     @Req() req: any,
     @Body() { recipeId }: RequestRecipePreferenceDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.createRecipePreference({
       recipeId,
@@ -107,7 +106,7 @@ export class RecipeController {
   async deleteRecipePreference(
     @Req() req: any,
     @Param('id', ParseIntPipe) recipeId: number,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req.user;
     return await this.recipeService.deleteRecipePreference({
       recipeId,

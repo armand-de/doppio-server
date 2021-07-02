@@ -12,8 +12,7 @@ import { UserService } from './user.service';
 import { User } from './entity/user.entity';
 import { PhoneDto } from './dto/phone.dto';
 import { NicknameDto } from './dto/nickname.dto';
-import { GetIsExistUserResponse } from './interface/get-is-exist-user-response.interface';
-import { StatusResponse } from '../types/status-response';
+import { IExistResponse, IStatusResponse } from '../types/response';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -40,18 +39,18 @@ export class UserController {
   @Get('/exist/phone/:phone')
   async getIsExistUserByPhone(
     @Param() { phone }: PhoneDto,
-  ): Promise<GetIsExistUserResponse> {
+  ): Promise<IExistResponse> {
     return {
-      isExist: await this.userService.getUserIsExistByPhone({ phone }),
+      exist: !!(await this.userService.getUserByPhone(phone)),
     };
   }
 
   @Get('/exist/nickname/:nickname')
   async getIsExistUserByNickname(
     @Param() { nickname }: NicknameDto,
-  ): Promise<GetIsExistUserResponse> {
+  ): Promise<IExistResponse> {
     return {
-      isExist: await this.userService.getUserIsExistByNickname({ nickname }),
+      exist: !!(await this.userService.getUserByNickname(nickname)),
     };
   }
 
@@ -60,14 +59,14 @@ export class UserController {
   async update(
     @Req() req: any,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<StatusResponse> {
+  ): Promise<IStatusResponse> {
     const { id: userId } = req;
     return await this.userService.updateUser({ userId, ...updateUserDto });
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete()
-  async delete(@Req() req: any): Promise<StatusResponse> {
+  async delete(@Req() req: any): Promise<IStatusResponse> {
     const { id } = req.user;
     return await this.userService.deleteUser(id);
   }

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entity/comment.entity';
 import { Repository } from 'typeorm';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse } from '../types/response';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { COMMENT_SELECT } from '../utils/data-select';
@@ -42,7 +42,7 @@ export class CommentService {
     userId,
     postId,
     contents,
-  }: CreateCommentDto): Promise<StatusResponse> {
+  }: CreateCommentDto): Promise<IStatusResponse> {
     try {
       const newComment = await this.commentRepository.create({
         user: { id: userId },
@@ -56,7 +56,7 @@ export class CommentService {
     return SUCCESS_RESPONSE;
   }
 
-  async deleteComment({ userId, id }): Promise<StatusResponse> {
+  async deleteComment({ userId, id }): Promise<IStatusResponse> {
     try {
       await this.commentRepository.delete({
         id,

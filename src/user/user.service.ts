@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PhoneDto } from './dto/phone.dto';
 import { NicknameDto } from './dto/nickname.dto';
 import { USER_GET_SELECT, USER_SELECT } from '../utils/data-select';
-import { StatusResponse } from '../types/status-response';
+import { IStatusResponse } from '../types/response';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class UserService {
   async updateUser({
     userId,
     ...updateUserDto
-  }: UpdateUserDto): Promise<StatusResponse> {
+  }: UpdateUserDto): Promise<IStatusResponse> {
     try {
       const user = await this.userRepository.findOne(userId);
       await this.userRepository.save({ ...user, ...updateUserDto });
@@ -43,7 +43,7 @@ export class UserService {
     return SUCCESS_RESPONSE;
   }
 
-  async deleteUser(id: string): Promise<StatusResponse> {
+  async deleteUser(id: string): Promise<IStatusResponse> {
     console.log(id);
     try {
       await this.userRepository.delete({ id });
@@ -67,14 +67,14 @@ export class UserService {
     });
   }
 
-  async getUserByPhone(phoneDto: PhoneDto): Promise<User> {
+  async getUserByPhone(phone: string): Promise<User> {
     return await this.userRepository.findOne({
-      where: phoneDto,
+      where: { phone },
       select: USER_SELECT,
     });
   }
 
-  async getUserByNickname({ nickname }: NicknameDto): Promise<User> {
+  async getUserByNickname(nickname: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { nickname },
       select: USER_GET_SELECT,
@@ -102,14 +102,6 @@ export class UserService {
     }
 
     throw new UnauthorizedException();
-  }
-
-  async getUserIsExistByPhone(phoneDto: PhoneDto): Promise<boolean> {
-    return !!(await this.getUserByPhone(phoneDto));
-  }
-
-  async getUserIsExistByNickname(nicknameDto: NicknameDto): Promise<boolean> {
-    return !!(await this.getUserByNickname(nicknameDto));
   }
 
   private static async getIsPasswordEqual({
