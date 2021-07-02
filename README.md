@@ -4,11 +4,17 @@
 
 Essential app for home cafe. Start a home cafe quickly with Doppio.
 
+This is a server that supports the REST API for the [mobile app](https://github.com/Armand-De/MobileApp).
+
+<br/>
+
 ## 🛠️ Installation
 
 ```bash
 $ npm install
 ```
+
+<br/>
 
 ## 🚀 Running the app
 
@@ -22,6 +28,8 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+<br/>
 
 ## 🔒 Environment Configuration
 
@@ -44,6 +52,6 @@ $ npm run start:prod
 - TWILIO_NUMBER
 
 
-<br/>
+<br/><br/>
 
 Doppio is made with ❤ in Armand De.
