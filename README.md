@@ -1,16 +1,16 @@
 # Doppio Server
 
-## Description
+## 📚 Description
 
 Essential app for home cafe. Start a home cafe quickly with Doppio.
 
-## Installation
+## 🛠️ Installation
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## 🚀 Running the app
 
 ```bash
 # development
@@ -23,23 +23,26 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Set environment variable
+## 🔒 Environment Configuration
 
-```bash
-NODE_ENV
 
-DB_NAME
-DB_PORT
-DB_HOST
-DB_USERNAME
-DB_PASSWORD
+- NODE_ENV
 
-JWT_ACCESS_TOKEN_SECRET
 
-TWILIO_ACCOUNT_SID
-TWILIO_AUTH_TOKEN
-TWILIO_NUMBER
-```
+- DB_NAME
+- DB_PORT
+- DB_HOST
+- DB_USERNAME
+- DB_PASSWORD
+
+
+- JWT_ACCESS_TOKEN_SECRET
+
+
+- TWILIO_ACCOUNT_SID
+- TWILIO_AUTH_TOKEN
+- TWILIO_NUMBER
+
 
 <br/>
 
