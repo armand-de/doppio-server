@@ -31,25 +31,23 @@ $ npm run start:prod
 
 <br/>
 
-## 🔒 Environment Configuration
+## 🔒 Environment configuration
 
+```
+NODE_ENV
 
-- NODE_ENV
+DB_NAME
+DB_PORT
+DB_HOST
+DB_USERNAME
+DB_PASSWORD
 
+JWT_ACCESS_TOKEN_SECRET
 
-- DB_NAME
-- DB_PORT
-- DB_HOST
-- DB_USERNAME
-- DB_PASSWORD
-
-
-- JWT_ACCESS_TOKEN_SECRET
-
-
-- TWILIO_ACCOUNT_SID
-- TWILIO_AUTH_TOKEN
-- TWILIO_NUMBER
+TWILIO_ACCOUNT_SID
+TWILIO_AUTH_TOKEN
+TWILIO_NUMBER
+```
 
 
 <br/><br/>
