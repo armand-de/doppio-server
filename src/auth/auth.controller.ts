@@ -7,6 +7,7 @@ import {
   Post,
   Req,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JoinUserDto } from './dto/join-user.dto';
@@ -16,6 +17,8 @@ import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { ILoginResponse } from './interface/login-response.interface';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
+import { PhoneDto } from '../user/dto/phone.dto';
+import { ChangePasswordVerifyDto } from "./dto/change-password-verify.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -52,5 +55,19 @@ export class AuthController {
     @Body() verifyUserDto: VerifyUserDto,
   ): Promise<IStatusResponse> {
     return await this.authService.verifyUser(verifyUserDto);
+  }
+
+  @Post('/password')
+  async changePasswordRequest(
+    @Body() { phone }: PhoneDto,
+  ): Promise<IStatusResponse> {
+    return await this.authService.changePasswordRequest(phone);
+  }
+
+  @Put('/password')
+  async changePasswordVerify(
+    @Body() changePasswordVerifyDto: ChangePasswordVerifyDto,
+  ): Promise<IStatusResponse> {
+    return await this.authService.changePasswordVerify(changePasswordVerifyDto);
   }
 }

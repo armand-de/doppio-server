@@ -17,11 +17,14 @@ import { UserService } from '../user/user.service';
 import { GetJwtAccessTokenDto } from './dto/get-jwt-access-token.dto';
 import { UpdateVerifyUserDto } from './dto/update-verify-user.dto';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
+import { ChangePasswordVerifyDto } from './dto/change-password-verify.dto';
+import { User } from '../user/entity/user.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Verify) private verifyRepository: Repository<Verify>,
+    @InjectRepository(User) private userRepository: Repository<User>,
     private readonly configService: ConfigService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
@@ -51,7 +54,6 @@ export class AuthService {
       } else {
         await this.createVerifyUser(object);
       }
-
       await this.sendVerifyMessage(object);
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
@@ -88,6 +90,44 @@ export class AuthService {
 
   async getJwtAccessToken(payload: GetJwtAccessTokenDto): Promise<string> {
     return this.jwtService.sign(payload);
+  }
+
+  async changePasswordRequest(phone: string): Promise<IStatusResponse> {
+    try {
+      const userPhoneIsExist = !!(await this.userService.getUserByPhone(phone));
+      if (!userPhoneIsExist) {
+        throw 'User is not exist.';
+      }
+      const verifyNumber = this.getVerifyNumber();
+      const verifyDto = { phone, verifyNumber };
+      await this.createVerifyUser(verifyDto);
+      await this.sendVerifyMessage(verifyDto);
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return SUCCESS_RESPONSE;
+  }
+
+  async changePasswordVerify({
+    password: plainPassword,
+    phone,
+    verifyNumber,
+  }: ChangePasswordVerifyDto): Promise<IStatusResponse> {
+    try {
+      const verify = await this.verifyRepository.findOne({
+        where: { phone, verifyNumber },
+        select: ['id'],
+      });
+      if (!verify) {
+        throw 'Invalid verification number.';
+      }
+      const user = await this.userService.getUserByPhone(phone);
+      const password = await this.encryptPassword(plainPassword);
+      await this.userRepository.save({ ...user, password });
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+    return SUCCESS_RESPONSE;
   }
 
   private async createVerifyUser(

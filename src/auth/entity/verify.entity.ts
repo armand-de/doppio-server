@@ -1,6 +1,9 @@
 import {
-  Column, CreateDateColumn,
-  Entity, PrimaryGeneratedColumn, UpdateDateColumn
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('verifies')
