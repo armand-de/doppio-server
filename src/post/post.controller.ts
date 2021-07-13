@@ -25,19 +25,19 @@ import { CreatePostDto } from './dto/create-post.dto';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get('my')
-  async getMyPostList(@Req() req: any): Promise<PostEntity[]> {
-    const { id } = req.user;
-    return await this.postService.getMyPostList(id);
-  }
-
   @Get()
-  async getPostList(
+  async getPosts(
     @Query('start', ParseIntPipe) start: number,
     @Query('keyword') keyword?: string,
   ): Promise<PostEntity[]> {
-    return await this.postService.getPostList({ start, keyword });
+    return await this.postService.getPosts({ start, keyword });
+  }
+
+  @Get('user-id/:userId')
+  async getPostsByUserId(
+    @Param('userId') userId: string,
+  ): Promise<PostEntity[]> {
+    return await this.postService.getPostsByUserId(userId);
   }
 
   @Get(':id')

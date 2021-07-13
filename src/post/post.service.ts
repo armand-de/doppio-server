@@ -29,18 +29,8 @@ export class PostService {
     private postPreferenceRepository: Repository<PostPreference>,
   ) {}
 
-  async getMyPostList(userId: string): Promise<Post[]> {
-    return await this.postRepository.find({
-      where: { user: { id: userId } },
-      select: ['id', 'title', 'image', 'createdDate'],
-      order: {
-        id: 'DESC',
-      },
-    });
-  }
-
-  async getPostList({ start, keyword }): Promise<Post[]> {
-    const postList = await this.postRepository.find({
+  async getPosts({ start, keyword }): Promise<Post[]> {
+    const posts = await this.postRepository.find({
       where: keyword
         ? [
             {
@@ -55,7 +45,18 @@ export class PostService {
         : LIST_WHERE_OPTION(start),
       ...POST_LIST_OPTION,
     });
-    return await this.postPreferenceListPipeline(postList);
+    return await this.postPreferenceListPipeline(posts);
+  }
+
+  async getPostsByUserId(id: string): Promise<Post[]> {
+    const posts = await this.postRepository.find({
+      where: { user: { id } },
+      select: ['id', 'title', 'image', 'createdDate'],
+      order: {
+        id: 'DESC',
+      },
+    });
+    return await this.postPreferenceListPipeline(posts);
   }
 
   async getCountOfPost(keyword?: string): Promise<number> {

@@ -23,20 +23,18 @@ import { IExistResponse, ICountResponse } from '../types/response';
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get('my')
-  async getMyRecipeList(@Req() req: any): Promise<Recipe[]> {
-    const { id } = req.user;
-    return await this.recipeService.getMyRecipeList(id);
-  }
-
   @Get()
-  async getRecipeList(
+  async getRecipes(
     @Query('start', ParseIntPipe) start: number,
     @Query('keyword') keyword?: string,
     @Query('category') category?: number,
   ): Promise<Recipe[]> {
-    return await this.recipeService.getRecipeList({ start, keyword, category });
+    return await this.recipeService.getRecipes({ start, keyword, category });
+  }
+
+  @Get('/user-id/:userId')
+  async getRecipesByUserId(@Param('userId') userId: string): Promise<Recipe[]> {
+    return await this.recipeService.getRecipesByUserId(userId);
   }
 
   @Get('count')

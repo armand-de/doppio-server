@@ -28,19 +28,8 @@ export class RecipeService {
     private recipePreferenceRepository: Repository<RecipePreference>,
   ) {}
 
-  async getMyRecipeList(userId: string): Promise<Recipe[]> {
-    const recipeList = await this.recipeRepository.find({
-      where: { user: { id: userId } },
-      select: RECIPE_LIST_SELECT,
-      order: {
-        id: 'DESC',
-      },
-    });
-    return await this.recipePreferenceListPipeline(recipeList);
-  }
-
-  async getRecipeList({ start, keyword, category }): Promise<Recipe[]> {
-    const recipeList = await this.recipeRepository.find({
+  async getRecipes({ start, keyword, category }): Promise<Recipe[]> {
+    const recipes = await this.recipeRepository.find({
       where: {
         ...(keyword ? { name: Like(`%${keyword}%`) } : {}),
         ...(category ? { category } : {}),
@@ -51,7 +40,18 @@ export class RecipeService {
       },
       ...RECIPE_LIST_OPTION,
     });
-    return await this.recipePreferenceListPipeline(recipeList);
+    return await this.recipePreferenceListPipeline(recipes);
+  }
+
+  async getRecipesByUserId(id: string): Promise<Recipe[]> {
+    const recipes = await this.recipeRepository.find({
+      where: { user: { id } },
+      select: RECIPE_LIST_SELECT,
+      order: {
+        id: 'DESC',
+      },
+    });
+    return await this.recipePreferenceListPipeline(recipes);
   }
 
   async getPreferenceCountByRecipeId(id: number): Promise<number> {
