@@ -18,7 +18,7 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { ILoginResponse } from './interface/login-response.interface';
 import { SUCCESS_RESPONSE } from '../utils/success-response';
 import { PhoneDto } from '../user/dto/phone.dto';
-import { ChangePasswordVerifyDto } from "./dto/change-password-verify.dto";
+import { ChangePasswordVerifyDto } from './dto/change-password-verify.dto';
 
 @Controller('auth')
 export class AuthController {

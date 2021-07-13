@@ -60,7 +60,7 @@ export class UserController {
     @Req() req: any,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<IStatusResponse> {
-    const { id: userId } = req;
+    const { id: userId } = req.user;
     return await this.userService.updateUser({ userId, ...updateUserDto });
   }
 

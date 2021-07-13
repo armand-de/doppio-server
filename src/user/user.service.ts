@@ -37,14 +37,12 @@ export class UserService {
       const user = await this.userRepository.findOne(userId);
       await this.userRepository.save({ ...user, ...updateUserDto });
     } catch (err) {
-      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
     return SUCCESS_RESPONSE;
   }
 
   async deleteUser(id: string): Promise<IStatusResponse> {
-    console.log(id);
     try {
       await this.userRepository.delete({ id });
     } catch (err) {
