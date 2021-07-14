@@ -41,20 +41,12 @@ export class AuthService {
     try {
       const verifyNumber = this.getVerifyNumber();
       const userPhoneIsExist = !!(await this.userService.getUserByPhone(phone));
-
       if (userPhoneIsExist) {
         throw 'User phone is exist.';
       }
-
-      const object = { phone, verifyNumber };
-      const verifyUserId = await this.getVerifyUserIdByPhone(phone);
-
-      if (verifyUserId) {
-        await this.updateVerifyNumberById({ id: verifyUserId, verifyNumber });
-      } else {
-        await this.createVerifyUser(object);
-      }
-      await this.sendVerifyMessage(object);
+      const verifyDto = { phone, verifyNumber };
+      await this.createVerifyUser(verifyDto);
+      await this.sendVerifyMessage(verifyDto);
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
@@ -130,15 +122,24 @@ export class AuthService {
     return SUCCESS_RESPONSE;
   }
 
-  private async createVerifyUser(
-    createVerifyUserDto: CreateVerifyUserDto,
-  ): Promise<void> {
-    const newVerifyUser = await this.verifyRepository.create(
-      createVerifyUserDto,
-    );
-    await this.verifyRepository.save(newVerifyUser).catch((err) => {
-      throw new Error(err);
-    });
+  private async createVerifyUser({
+    phone,
+    verifyNumber,
+  }: CreateVerifyUserDto): Promise<void> {
+    try {
+      const id = await this.getVerifyUserIdByPhone(phone);
+      if (id) {
+        await this.updateVerifyNumberById({ id, verifyNumber });
+      } else {
+        const newVerifyUser = await this.verifyRepository.create({
+          phone,
+          verifyNumber,
+        });
+        await this.verifyRepository.save(newVerifyUser);
+      }
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
   }
 
   private async updateVerifyNumberById({
